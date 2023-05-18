@@ -25,7 +25,6 @@ The STAC Generator accepts a JSON payload with the following structure:
 ```
 
 If itemId is not supplied, a unique item ID will be generated. 
-If extensions are not supplied or the array is empty, all available STAC extensions will be used.
 
 ## Metadata Structure
 
