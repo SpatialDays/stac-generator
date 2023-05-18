@@ -46,3 +46,45 @@ Below is a simplified example of a `metadata.json` that includes information for
   }
 }
 ```
+
+## Asynchronous Processing & Job Queueing
+
+STAC Generator is designed to handle multiple requests efficiently, using Redis Queue (RQ) for job queueing and providing asynchronous processing of STAC Item generation.
+
+When a request is received, it is converted into a job and added to a Redis-backed queue for processing. This allows the service to immediately start handling the next request.
+
+Each job is assigned a unique ID, which is returned in the response to the client's request. This job ID can be used by the client to check the status of their job.
+
+Here's a simplified example of how the queueing system works:
+
+```python
+from rq import Queue
+from redis import Redis
+
+# Set up a connection to Redis and a queue
+redis_conn = Redis()
+q = Queue(connection=redis_conn)
+
+# When a request is received, create a job and add it to the queue
+payload = {
+    # ...payload data...
+}
+job = q.enqueue(generate_stac_item, payload)
+
+# Return the job ID in the response
+return {'job_id': job.get_id()}, 202
+```
+
+To check the status of a job, we can use the provided job ID with a status endpoint:
+
+```python
+from flask import Flask, request
+from rq.job import Job
+
+app = Flask(__name__)
+
+@app.route("/status/<job_id>", methods=['GET'])
+def get_status(job_id):
+    job = Job.fetch(job_id, connection=redis_conn)
+    return {'status': job.get_status()}
+```
