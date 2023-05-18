@@ -8,7 +8,7 @@ The STAC Generator accepts a JSON payload with the following structure:
 
 ```json
 {
-  "source": "manual", // or "automatic"
+  "source": "manual | automatic",
   "provider": "<provider-name>",
   "collection": "<URL-to-collection.json>",
   "itemId": "<optional-item-ID>",
@@ -16,12 +16,10 @@ The STAC Generator accepts a JSON payload with the following structure:
     "<Blob-Storage-URL-1>",
     "<Blob-Storage-URL-2>",
     "<Blob-Storage-URL-3>",
-    // ...as many URLs as there are assets
   ],
   "metadataPaths": [
     "<Blob-Storage-URL-Metadata-1>",
     "<Blob-Storage-URL-Metadata-2>"
-    // ...as many URLs as there are metadata files
   ]
 }
 ```
