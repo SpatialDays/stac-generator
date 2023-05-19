@@ -34,6 +34,18 @@ files = [
 ]
 
 [[package]]
+name = "async-timeout"
+version = "4.0.2"
+description = "Timeout context manager for asyncio programs"
+category = "main"
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "async-timeout-4.0.2.tar.gz", hash = "sha256:2163e1640ddb52b7a8c80d0a67a08587e5d245cc9c553a74a847056bc2976b15"},
+    {file = "async_timeout-4.0.2-py3-none-any.whl", hash = "sha256:8ca1e4fcf50d07413d66d1a5e416e42cfdf5851c981d679a09851a6853383b3c"},
+]
+
+[[package]]
 name = "black"
 version = "22.12.0"
 description = "The uncompromising code formatter."
@@ -626,6 +638,25 @@ files = [
 cli = ["click (>=5.0)"]
 
 [[package]]
+name = "redis"
+version = "4.5.5"
+description = "Python client for Redis database and key-value store"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "redis-4.5.5-py3-none-any.whl", hash = "sha256:77929bc7f5dab9adf3acba2d3bb7d7658f1e0c2f1cafe7eb36434e751c471119"},
+    {file = "redis-4.5.5.tar.gz", hash = "sha256:dc87a0bdef6c8bfe1ef1e1c40be7034390c2ae02d92dcd0c7ca1729443899880"},
+]
+
+[package.dependencies]
+async-timeout = {version = ">=4.0.2", markers = "python_full_version <= \"3.11.2\""}
+
+[package.extras]
+hiredis = ["hiredis (>=1.0.0)"]
+ocsp = ["cryptography (>=36.0.1)", "pyopenssl (==20.0.1)", "requests (>=2.26.0)"]
+
+[[package]]
 name = "requests"
 version = "2.30.0"
 description = "Python HTTP for Humans."
@@ -646,6 +677,22 @@ urllib3 = ">=1.21.1,<3"
 [package.extras]
 socks = ["PySocks (>=1.5.6,!=1.5.7)"]
 use-chardet-on-py3 = ["chardet (>=3.0.2,<6)"]
+
+[[package]]
+name = "rq"
+version = "1.14.1"
+description = "RQ is a simple, lightweight, library for creating background jobs, and processing them."
+category = "main"
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "rq-1.14.1-py2.py3-none-any.whl", hash = "sha256:37e003db1da205e08db6cc4653b7c6ccfd9292000954240308abfce2ebde43ba"},
+    {file = "rq-1.14.1.tar.gz", hash = "sha256:5fb86038922ddd76eb2d9aa0adeec6dcf64f159dbbe730b26358b1417120dd44"},
+]
+
+[package.dependencies]
+click = ">=5.0.0"
+redis = ">=3.5.0"
 
 [[package]]
 name = "six"
@@ -894,4 +941,4 @@ dev = ["black (>=19.3b0)", "pytest (>=4.6.2)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "b9be2f7e11787729282de931677175344555975171548c3a55034f9a62a8eb2b"
+content-hash = "2817c5bd56d8d954995cbef91cbcd19d457055e4ced5cef93d1f0e5264d87969"
