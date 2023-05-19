@@ -1,20 +1,20 @@
 # Run with python -m unittest app.stac.tests
 
 import unittest
+from loguru import logger
 from .models import GenerateSTACPayload
 from .tasks import create_item
-from loguru import logger
 
 
 class TestTasks(unittest.TestCase):
     def test_create_item(self):
         mock_item_dict = {
-            "source": "string",
-            "provider": "string",
-            "collection": "string",
-            "itemId": "string",
-            "assetPaths": ["string"],
-            "metadataPaths": ["string"],
+            "source": "manual",
+            "provider": "Spatial Days",
+            "collection": "test-collection",
+            "itemId": "test-item",
+            "assetPaths": ["data/Maxar/test-item.tif"],
+            "metadataPaths": ["data/Maxar/metadata.json"],
         }
         item = GenerateSTACPayload(**mock_item_dict)
 
