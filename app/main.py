@@ -14,7 +14,7 @@ app = FastAPI(title="STAC Generator API", version="0.1.0")
 
 @app.on_event("startup")
 async def startup_event():
-    app.state.redis_conn = create_redis_connection(host="redis", port=6379, db=0)
+    app.state.redis_conn = await create_redis_connection(host="redis", port=6379, db=0)
     app.state.redis_queue = create_rq_queue(app.state.redis_conn)
 
 app.include_router(main_router, tags=["Main"])
