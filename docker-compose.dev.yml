@@ -24,5 +24,11 @@ services:
     volumes:
       - redis_data:/data
 
+  worker:
+    build: .
+    command: rq worker --url redis://redis:6379
+    depends_on:
+      - redis
+
 volumes:
   redis_data:
