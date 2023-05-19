@@ -5,4 +5,6 @@ import logging
 def create_item(item_dict: dict):
     item = GenerateSTACPayload(**item_dict)
     logging.info(f"Created item: {item}")
-    return True
+    return {
+        "message": "STAC Item created",
+    }

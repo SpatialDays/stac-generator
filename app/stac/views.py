@@ -9,5 +9,5 @@ router = APIRouter()
 @router.post("/stac/generate")
 async def generate_stac(item: GenerateSTACPayload, queue: Queue = Depends(get_redis_queue)):
     # Create a new job and add it to the queue
-    job = queue.enqueue("stac_generator.tasks.create_item", item.dict())
+    job = queue.enqueue("app.stac.tasks.create_item", item.dict())
     return {"message": "STAC generation started", "job_id": job.get_id()}
