@@ -25,7 +25,9 @@ services:
       - redis_data:/data
 
   worker:
-    build: .
+    build: 
+      context: .
+      dockerfile: .docker/Dockerfile
     command: rq worker --url redis://redis:6379
     depends_on:
       - redis
