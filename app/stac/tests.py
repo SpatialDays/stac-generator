@@ -3,7 +3,7 @@
 import unittest
 from loguru import logger
 from .models import GenerateSTACPayload
-from .tasks import create_item
+from .services.stac_item_creator import STACItemCreator
 
 
 class TestTasks(unittest.TestCase):
@@ -22,7 +22,10 @@ class TestTasks(unittest.TestCase):
             "message": "STAC Item created",
         }
 
-        self.assertEqual(create_item(mock_item_dict), expected_result)
+        stac_item_creator = STACItemCreator(item.dict())
+        stac_item = stac_item_creator.create_item()
+
+        self.assertEqual(stac_item.id, "test-item")
 
 
 if __name__ == "__main__":
