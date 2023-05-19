@@ -1,4 +1,3 @@
-import os
 from fastapi import FastAPI, APIRouter
 from dotenv import load_dotenv
 
@@ -12,9 +11,9 @@ root_router = APIRouter()
 
 app = FastAPI(title="STAC Generator API", version="0.1.0")
 
-app.include_router(main_router)
-app.include_router(stac_router)
-app.include_router(root_router)
+app.include_router(main_router, tags=["Main"])
+app.include_router(stac_router, tags=["STAC"])
+app.include_router(root_router, tags=["Root"])
 
 init_logging()
 
