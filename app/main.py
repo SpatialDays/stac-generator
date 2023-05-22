@@ -1,9 +1,11 @@
 from fastapi import FastAPI, APIRouter
 from dotenv import load_dotenv
+import threading
+from loguru import logger
 
 from app.stac import router as stac_router
 from app.core.main_router import router as main_router
-from app.core.redis import create_redis_connection, create_rq_queue
+from app.core.redis import create_redis_connection, redis_listener
 from app.core.logger import init_logging
 
 load_dotenv(".env")
@@ -13,9 +15,14 @@ root_router = APIRouter()
 app = FastAPI(title="STAC Generator API", version="0.1.0")
 
 @app.on_event("startup")
-async def startup_event():
-    app.state.redis_conn = await create_redis_connection(host="redis", port=6379, db=0)
-    app.state.redis_queue = create_rq_queue(app.state.redis_conn)
+def startup_event():
+    app.state.redis_conn = create_redis_connection(host="redis", port=6379, db=0)
+    if redis_conn := app.state.redis_conn:
+        logger.info("Connected to Redis")
+
+    app.state.redis_queue_key = "stac_generator_generate"
+    threading.Thread(target=redis_listener, args=(redis_conn, app), daemon=True).start()
+
 
 app.include_router(main_router, tags=["Main"])
 app.include_router(stac_router, tags=["STAC"])

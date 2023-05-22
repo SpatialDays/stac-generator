@@ -1,13 +1,13 @@
 from fastapi import Depends
-from rq import Queue
 from fastapi import APIRouter
 from .models import GenerateSTACPayload
-from app.core.dependencies import get_redis_queue
+
+from .services.stac_item_creator import STACItemCreator
 
 router = APIRouter()
 
+
 @router.post("/stac/generate")
-async def generate_stac(item: GenerateSTACPayload, queue: Queue = Depends(get_redis_queue)):
-    # Create a new job and add it to the queue
-    job = queue.enqueue("app.stac.tasks.create_item", item.dict())
-    return {"message": "STAC generation started", "job_id": job.get_id()}
+async def generate_stac(item: GenerateSTACPayload):
+    stac = STACItemCreator(item_dict=item.dict()).create_item()
+    return {"stac": stac}

@@ -1,7 +1,6 @@
 from pystac import Asset, Item, Provider, MediaType
 from ..models import GenerateSTACPayload
 from loguru import logger
-from typing import List
 import datetime
 
 
@@ -47,7 +46,7 @@ class STACItemCreator:
 
         # TODO: Add metadata to the item using self.item_data.metadataPaths
 
-        return stac_item
+        return stac_item.to_dict()
 
     def _add_assets_to_item(self, stac_item: Item) -> None:
         """
