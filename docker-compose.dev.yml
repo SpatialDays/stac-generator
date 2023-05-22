@@ -24,13 +24,5 @@ services:
     volumes:
       - redis_data:/data
 
-  worker:
-    build: 
-      context: .
-      dockerfile: .docker/Dockerfile
-    command: rq worker --url redis://redis:6379
-    depends_on:
-      - redis
-
 volumes:
   redis_data:
