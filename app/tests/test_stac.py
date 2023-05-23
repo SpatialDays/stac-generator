@@ -1,4 +1,4 @@
-import pytest
+import json
 from fastapi.testclient import TestClient
 
 from app.main import app
@@ -20,14 +20,31 @@ def test_status():
 
 
 def test_create_item():
+    with open("app/tests/data/example_gdal_info.json") as file:
+        gdal_info_dict = json.load(file)
+
     mock_item_dict = {
-        "source": "manual",
-        "provider": "Spatial Days",
-        "collection": "test-collection",
-        "itemId": "test-item",
-        "assetPaths": ["data/Maxar/test-item.tif"],
-        "metadataPaths": ["data/Maxar/metadata.json"],
+        "gdalInfos": [
+            {
+                "tiffUrl": "https://path-to-cloud-storage.com/first-file.tif",
+                "gdalInfo": gdal_info_dict,
+            },
+            {
+                "tiffUrl": "https://path-to-cloud-storage.com/second-file.tif",
+                "gdalInfo": gdal_info_dict,
+            },
+        ],
+        "assets": [
+            "https://path-to-cloud-storage.com/readme.md",
+            "https://path-to-cloud-storage.com/license.txt",
+            "https://path-to-cloud-storage.com/shapefile.shp",
+            "https://path-to-cloud-storage.com/metadata.json",
+            "https://path-to-cloud-storage.com/first-file.tif",
+            "https://path-to-cloud-storage.com/second-file.tif",
+        ],
+        "method": "POST",
     }
+
     item = GenerateSTACPayload(**mock_item_dict)
 
     stac_item_creator = STACItemCreator(item.dict())
