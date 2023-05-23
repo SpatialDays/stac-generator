@@ -34,14 +34,14 @@ def test_create_item():
                 "gdalInfo": gdal_info_dict,
             },
         ],
-        "assets": [
+        "files": [
             "https://path-to-cloud-storage.com/readme.md",
             "https://path-to-cloud-storage.com/license.txt",
             "https://path-to-cloud-storage.com/shapefile.shp",
-            "https://path-to-cloud-storage.com/metadata.json",
             "https://path-to-cloud-storage.com/first-file.tif",
             "https://path-to-cloud-storage.com/second-file.tif",
         ],
+        "metadata": ["https://path-to-cloud-storage.com/metadata.json"],
         "method": "POST",
     }
 

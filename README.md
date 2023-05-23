@@ -20,13 +20,15 @@ The STAC Generator accepts a JSON payload with the following structure:
       }
     }
   ],
-  "assets": [
+  "files": [
     "https://path-to-cloud-storage/readme.md",
     "https://path-to-cloud-storage/license.txt",
     "https://path-to-cloud-storage/shapefile.shp",
-    "https://path-to-cloud-storage/metadata.json",
     "https://path-to-cloud-storage/first-file.tif",
     "https://path-to-cloud-storage/second-file.tif"
+  ],
+  "metadata": [
+    "https://path-to-cloud-storage/metadata.json",
   ],
   "method": "POST | PUT | DELETE"
 }
