@@ -1,10 +1,13 @@
 from typing import List, Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, HttpUrl
+
+
+class GDALInfos(BaseModel):
+    tiffUrl: HttpUrl
+    gdalInfo: dict
+
 
 class GenerateSTACPayload(BaseModel):
-    source: str
-    provider: str
-    collection: str
-    itemId: Optional[str] = None
-    assetPaths: List[str]
-    metadataPaths: List[str]
+    gdalInfos: List[GDALInfos]
+    assets: List[HttpUrl]
+    method: str = "POST"
