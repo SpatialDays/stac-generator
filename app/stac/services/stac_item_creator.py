@@ -1,5 +1,4 @@
 import datetime
-import json
 
 import rioxarray as rxr
 import xarray as xr
@@ -32,7 +31,7 @@ class STACItemCreator:
             raise ValueError("Payload should be a dictionary.")
         self.payload = GenerateSTACPayload(**payload)
         self.item = Item(
-            id="test-id",
+            id="test-id", # Move from hardcoded value to input from payload
             geometry=None,
             bbox=None,
             datetime=datetime.datetime.now(),
@@ -51,9 +50,6 @@ class STACItemCreator:
         self._add_assets()
         self._add_rio_stac_metadata()
         self._add_gdal_metadata()
-
-        with open("data/item.json", "w") as f:
-            json.dump(self.item.to_dict(), f, indent=2)
 
         return self.item.to_dict()
 
