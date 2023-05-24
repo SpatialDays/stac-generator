@@ -10,7 +10,7 @@ from loguru import logger
 from pystac import Asset, Item, Provider, MediaType
 import rio_stac
 from ..models import GenerateSTACPayload
-from .utils import get_file_type, is_tiff, merge_rio_stac_items
+from .utils import get_file_type, is_tiff
 
 
 class STACItemCreator:
@@ -33,6 +33,7 @@ class STACItemCreator:
             datetime=datetime.datetime.now(),
             properties={},
         )
+        self.generated_rio_stac_items = []
         self.combined_tiff = None
 
     def create_item(self) -> Item:
@@ -42,51 +43,51 @@ class STACItemCreator:
         Returns:
             Item: The created STAC item.
         """
-        # Add the assets
-        # self._combine_tiffs() # Make this optional
+
+        # self._combine_tiffs() # TODO: Make this optional and add a flag to the payload
         self._add_assets()
         self._add_rio_stac_metadata()
         self._add_gdal_metadata()
 
-        print(self.item.to_dict())
+        with open("data/item.json", "w") as f:
+            json.dump(self.item.to_dict(), f, indent=2)
 
         return self.item.to_dict()
 
     def _add_assets(self):
         for file in self.payload.files:
-            media_type = get_file_type(file)
-            asset = Asset(href=file, media_type=media_type)
-            self.item.add_asset(key=file, asset=asset)
+            if not is_tiff(file):
+                media_type = get_file_type(file)
+                asset = Asset(href=file, media_type=media_type)
+                self.item.add_asset(key=file, asset=asset)
 
     def _add_gdal_metadata(self):
-        # for gdal_metadata in self.payload.gdalInfos:
-        #     url, info = gdal_metadata.tiffUrl, gdal_metadata.gdalInfo
-        #     self.item.properties = {**self.item.properties, **info.get("stac", {})}
-        pass
+        for gdal_metadata in self.payload.gdalInfos:
+            info = gdal_metadata.gdalInfo
+            gdal_metadata = info["metadata"]
+            gdal_datetime = gdal_metadata[""]["TIFFTAG_DATETIME"]  # 2022:09:09 15:27:53
+            gdal_datetime = datetime.datetime.strptime(
+                gdal_datetime, "%Y:%m:%d %H:%M:%S"
+            )
 
-    # TODO: Make this optional and add a flag to the payload
+            self.item.datetime = gdal_datetime
+            self.item.properties["license"] = gdal_metadata[""]["TIFFTAG_COPYRIGHT"]
+
     def _combine_tiffs(self):
-        # Create a list for the data
         datasets = []
-        # Check each file in the list
         for filepath in self.payload.files:
             if is_tiff(filepath):
-                # Open the file
                 ds = rxr.open_rasterio(filepath, masked=True)
-                # Add the data to the list
                 datasets.append(ds)
 
         # Merge the data
         combined = xr.concat(datasets, dim="band")
-
-        # Write the combined raster to a new file
         combined.rio.to_raster("combined.tif")
 
         return "combined.tif"
 
     def _add_rio_stac_metadata(self):
         # Generate the stac metadata for each tiff file
-        generated_rio_stac_items = []
         for filepath in self.payload.files:
             if is_tiff(filepath):
                 generated_stac = rio_stac.create_stac_item(
@@ -96,13 +97,14 @@ class STACItemCreator:
                     with_raster=True,
                     geom_densify_pts=21,
                 )
-                generated_rio_stac_items.append(generated_stac)
+                self.generated_rio_stac_items.append(generated_stac)
 
-        # Now we want to add the merged rio stac item to the self.item
+                self.item.add_asset(key=filepath, asset=generated_stac.assets["asset"])
+
         self.item.properties = {
             **self.item.properties,
-            **generated_rio_stac_items[0].properties,
+            **self.generated_rio_stac_items[0].properties,
         }
-        self.item.bbox = generated_rio_stac_items[0].bbox
-        self.item.geometry = generated_rio_stac_items[0].geometry
-        self.item.stac_extensions = generated_rio_stac_items[0].stac_extensions
+        self.item.bbox = self.generated_rio_stac_items[0].bbox
+        self.item.geometry = self.generated_rio_stac_items[0].geometry
+        self.item.stac_extensions = self.generated_rio_stac_items[0].stac_extensions
