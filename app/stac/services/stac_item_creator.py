@@ -1,4 +1,5 @@
 import datetime
+import random
 
 import rioxarray as rxr
 import xarray as xr
@@ -31,7 +32,7 @@ class STACItemCreator:
             raise ValueError("Payload should be a dictionary.")
         self.payload = GenerateSTACPayload(**payload)
         self.item = Item(
-            id="test-id", # Move from hardcoded value to input from payload
+            id=f"item-{random.randint(0, 100000)}",
             geometry=None,
             bbox=None,
             datetime=datetime.datetime.now(),
