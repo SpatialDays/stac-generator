@@ -1,13 +1,10 @@
 import datetime
 import json
 
-import rasterio
 import rioxarray as rxr
 import xarray as xr
 
-import numpy as np
-from loguru import logger
-from pystac import Asset, Item, Provider, MediaType
+from pystac import Asset, Item
 import rio_stac
 from ..models import GenerateSTACPayload
 from .utils import get_file_type, is_tiff
@@ -16,6 +13,12 @@ from .utils import get_file_type, is_tiff
 class STACItemCreator:
     """
     This class is responsible for creating STAC items from dictionaries.
+
+    Attributes:
+        payload (GenerateSTACPayload): The input data for creating a STAC item.
+        item (Item): The STAC item being created.
+        generated_rio_stac_items (list): List of generated items using the rio_stac package.
+        combined_tiff (str): Path to the combined TIFF file from all input TIFF files.
     """
 
     def __init__(self, payload: dict):
@@ -23,8 +26,10 @@ class STACItemCreator:
         Initialize with a dictionary that describes a STAC item.
 
         Args:
-            item_dict (dict): A dictionary containing the necessary data to create a STAC item.
+            payload (dict): A dictionary containing the necessary data to create a STAC item.
         """
+        if not isinstance(payload, dict):
+            raise ValueError("Payload should be a dictionary.")
         self.payload = GenerateSTACPayload(**payload)
         self.item = Item(
             id="test-id",
@@ -43,8 +48,6 @@ class STACItemCreator:
         Returns:
             Item: The created STAC item.
         """
-
-        # self._combine_tiffs() # TODO: Make this optional and add a flag to the payload
         self._add_assets()
         self._add_rio_stac_metadata()
         self._add_gdal_metadata()
@@ -55,6 +58,9 @@ class STACItemCreator:
         return self.item.to_dict()
 
     def _add_assets(self):
+        """
+        Add assets to the STAC item from the file paths provided in the payload.
+        """
         for file in self.payload.files:
             if not is_tiff(file):
                 media_type = get_file_type(file)
@@ -62,18 +68,29 @@ class STACItemCreator:
                 self.item.add_asset(key=file, asset=asset)
 
     def _add_gdal_metadata(self):
+        """
+        Add GDAL metadata to the STAC item from the gdalInfos provided in the payload.
+        """
         for gdal_metadata in self.payload.gdalInfos:
-            info = gdal_metadata.gdalInfo
-            gdal_metadata = info["metadata"]
-            gdal_datetime = gdal_metadata[""]["TIFFTAG_DATETIME"]  # 2022:09:09 15:27:53
-            gdal_datetime = datetime.datetime.strptime(
-                gdal_datetime, "%Y:%m:%d %H:%M:%S"
-            )
-
-            self.item.datetime = gdal_datetime
-            self.item.properties["license"] = gdal_metadata[""]["TIFFTAG_COPYRIGHT"]
+            try:
+                info = gdal_metadata.gdalInfo
+                metadata = info.get("metadata")
+                if metadata is None:
+                    continue
+                gdal_datetime = metadata[""]["TIFFTAG_DATETIME"]  # 2022:09:09 15:27:53
+                self.item.datetime = datetime.datetime.strptime(
+                    gdal_datetime, "%Y:%m:%d %H:%M:%S"
+                )
+                gdal_copyright = metadata[""]["TIFFTAG_COPYRIGHT"]
+                if gdal_copyright is not None:
+                    self.item.properties["license"] = gdal_copyright
+            except KeyError:
+                raise KeyError("Key error occurred while parsing GDAL metadata.")
 
     def _combine_tiffs(self):
+        """
+        Combine all TIFF files provided in the payload into a single TIFF file.
+        """
         datasets = []
         for filepath in self.payload.files:
             if is_tiff(filepath):
@@ -87,7 +104,9 @@ class STACItemCreator:
         return "combined.tif"
 
     def _add_rio_stac_metadata(self):
-        # Generate the stac metadata for each tiff file
+        """
+        Generate STAC metadata for each TIFF file using rio_stac, and add to the STAC item.
+        """
         for filepath in self.payload.files:
             if is_tiff(filepath):
                 generated_stac = rio_stac.create_stac_item(
@@ -101,10 +120,11 @@ class STACItemCreator:
 
                 self.item.add_asset(key=filepath, asset=generated_stac.assets["asset"])
 
-        self.item.properties = {
-            **self.item.properties,
-            **self.generated_rio_stac_items[0].properties,
-        }
-        self.item.bbox = self.generated_rio_stac_items[0].bbox
-        self.item.geometry = self.generated_rio_stac_items[0].geometry
-        self.item.stac_extensions = self.generated_rio_stac_items[0].stac_extensions
+        if not self.generated_rio_stac_items:
+            raise ValueError("No rio_stac generated items found.")
+
+        generated_item = self.generated_rio_stac_items[0]
+        self.item.properties.update(generated_item.properties)
+        self.item.bbox = generated_item.bbox
+        self.item.geometry = generated_item.geometry
+        self.item.stac_extensions = generated_item.stac_extensions
