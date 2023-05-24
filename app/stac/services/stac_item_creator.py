@@ -114,7 +114,9 @@ class STACItemCreator:
                     geom_densify_pts=21,
                 )
                 self.generated_rio_stac_items.append(generated_stac)
-                generated_stac.assets["asset"].media_type = 'image/tiff; application=geotiff'
+                generated_stac.assets[
+                    "asset"
+                ].media_type = "image/tiff; application=geotiff"  # with cog checker we should add profile=cloud-optimized",
                 self.item.add_asset(key=filepath, asset=generated_stac.assets["asset"])
 
         if not self.generated_rio_stac_items:
