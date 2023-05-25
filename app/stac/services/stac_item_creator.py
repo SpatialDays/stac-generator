@@ -7,7 +7,7 @@ import xarray as xr
 from pystac import Asset, Item
 import rio_stac
 from ..models import GenerateSTACPayload
-from .utils import get_file_type, is_tiff
+from .utils import get_file_type, is_tiff, get_mounted_file
 
 
 class STACItemCreator:
@@ -50,7 +50,8 @@ class STACItemCreator:
         """
         self._add_assets()
         self._add_rio_stac_metadata()
-        self._add_gdal_metadata()
+        if self.payload.gdalInfos:
+            self._add_gdal_metadata()
 
         return self.item.to_dict()
 
@@ -91,7 +92,7 @@ class STACItemCreator:
         datasets = []
         for filepath in self.payload.files:
             if is_tiff(filepath):
-                ds = rxr.open_rasterio(filepath, masked=True)
+                ds = rxr.open_rasterio(get_mounted_file(filepath), masked=True)
                 datasets.append(ds)
 
         # Merge the data
@@ -107,7 +108,7 @@ class STACItemCreator:
         for filepath in self.payload.files:
             if is_tiff(filepath):
                 generated_stac = rio_stac.create_stac_item(
-                    filepath,
+                    get_mounted_file(filepath),
                     with_eo=True,
                     with_proj=True,
                     with_raster=True,

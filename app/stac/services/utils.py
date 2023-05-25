@@ -1,4 +1,5 @@
 import mimetypes
+from urllib.parse import urlparse
 
 
 def get_file_type(filepath: str):
@@ -28,3 +29,21 @@ def is_tiff(filepath: str):
     """
     mime_type = get_file_type(filepath)
     return mime_type == "image/tiff"
+
+
+def get_mounted_file(filepath: str):
+    """
+    Converts a given file path into its corresponding path within a mounted file system.
+
+    This function parses the given file path and prepends it with '/mnt/' to simulate a path
+    in a file system that's been mounted at '/mnt/'.
+
+    Args:
+        filepath (str): The original file path.
+
+    Returns:
+        str: The corresponding path in the mounted file system.
+    """
+    parsed_url = urlparse(filepath)
+    mounted_path = '/mnt/' + parsed_url.path.lstrip('/')
+    return mounted_path
