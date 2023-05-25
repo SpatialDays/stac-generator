@@ -8,7 +8,7 @@ class GDALInfos(BaseModel):
 
 
 class GenerateSTACPayload(BaseModel):
-    gdalInfos: List[GDALInfos]
+    gdalInfos: Optional[List[GDALInfos]]
     files: List[str]
     metadata: Optional[List[HttpUrl]]
-    method: str = "POST"
+    method: Optional[str] = "POST"
