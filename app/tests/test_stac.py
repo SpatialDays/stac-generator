@@ -10,7 +10,6 @@ STATUS_ENDPOINT = "/status"
 
 
 def test_status():
-
     """
     Tests if the stac get request is successful
     """
@@ -20,6 +19,26 @@ def test_status():
 
 
 def test_create_item():
+    mock_item_dict = {
+        "files": [
+            "https://path-to-cloud-storage.com/readme.md",
+            "https://path-to-cloud-storage.com/license.txt",
+            "https://path-to-cloud-storage.com/shapefile.shp",
+            "data/Maxar/test-item.tif",
+        ],
+        "metadata": ["https://path-to-cloud-storage.com/metadata.json"],
+        "method": "POST",
+    }
+
+    item = GenerateSTACPayload(**mock_item_dict)
+
+    stac_item_creator = STACItemCreator(item.dict())
+    stac_item = stac_item_creator.create_item()
+
+    assert type(stac_item) == dict
+
+
+def test_create_item_with_gdal_info():
     with open("app/tests/data/example_gdal_info.json") as file:
         gdal_info_dict = json.load(file)
 
