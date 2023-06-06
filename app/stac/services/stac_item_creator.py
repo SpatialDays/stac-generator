@@ -98,40 +98,40 @@ class STACItemCreator:
 
         return "combined.tif"
 
+    def _generate_and_add_metadata(self, filepath, add_asset=True):
+        """
+        Generate STAC metadata for the given TIFF file using rio_stac and add to the STAC item.
+        """
+        generated_stac = rio_stac.create_stac_item(
+            get_mounted_file(filepath),
+            with_eo=True,
+            with_proj=True,
+            with_raster=True,
+            geom_densify_pts=21,
+        )
+        self.generated_rio_stac_items.append(generated_stac)
+
+        if add_asset:
+            generated_stac.assets["asset"].media_type = return_tiff_media_type(filepath)
+            self.item.add_asset(key=filepath, asset=generated_stac.assets["asset"])
+
+        return generated_stac
+
     def _add_tiff_stac_metadata(self):
         """
         Generate STAC metadata for each TIFF file using rio_stac, and add to the STAC item.
         """
         for filepath in self.payload.files:
             if is_tiff(filepath):
-                generated_stac = rio_stac.create_stac_item(
-                    get_mounted_file(filepath),
-                    with_eo=True,
-                    with_proj=True,
-                    with_raster=True,
-                    geom_densify_pts=21,
-                )
-                self.generated_rio_stac_items.append(generated_stac)
-
-                generated_stac.assets["asset"].media_type = return_tiff_media_type(
-                    filepath
-                )
-                self.item.add_asset(key=filepath, asset=generated_stac.assets["asset"])
+                generated_item = self._generate_and_add_metadata(filepath)
 
         if self.combined_tiff:
-            generated_stac = rio_stac.create_stac_item(
-                get_mounted_file(self.combined_tiff),
-                with_eo=True,
-                with_proj=True,
-                with_raster=True,
-                geom_densify_pts=21,
+            generated_item = self._generate_and_add_metadata(
+                self.combined_tiff, add_asset=False
             )
-            self.generated_rio_stac_items.append(generated_stac)
 
         if not self.generated_rio_stac_items:
             raise ValueError("No rio_stac generated items found.")
-
-        generated_item = self.generated_rio_stac_items[-1]
 
         self.item.properties.update(generated_item.properties)
         self.item.bbox = generated_item.bbox
@@ -141,9 +141,10 @@ class STACItemCreator:
         with rasterio.open(get_mounted_file(filepath)) as ds:
             tags = ds.tags()
             tag_datetime = tags.get("TIFFTAG_DATETIME")  # 2022:09:09 15:27:53
-            self.item.datetime = datetime.datetime.strptime(
-                tag_datetime, "%Y:%m:%d %H:%M:%S"
-            )
+            if tag_datetime is not None:
+                self.item.datetime = datetime.datetime.strptime(
+                    tag_datetime, "%Y:%m:%d %H:%M:%S"
+                )
 
             tag_copyright = tags.get("TIFFTAG_COPYRIGHT")
             if tag_copyright is not None:
