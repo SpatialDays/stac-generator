@@ -229,6 +229,6 @@ def return_tiff_media_type(tiff_path: str) -> str:
                 logger.info("COG warnings: {}".format(cog[2]))
 
         if cog[0]:
-            logger.info("The file is a COG")
             return "image/tiff; application=geotiff; profile=cloud-optimized"
+
     return "image/tiff; application=geotiff"
