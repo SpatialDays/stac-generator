@@ -1,5 +1,6 @@
 import datetime
 import random
+import os
 
 import rioxarray as rxr
 import xarray as xr
@@ -8,6 +9,8 @@ from pystac import Asset, Item
 import rio_stac
 from ..models import GenerateSTACPayload
 from .utils import get_file_type, is_tiff, get_mounted_file
+
+from loguru import logger
 
 
 class STACItemCreator:
@@ -49,9 +52,15 @@ class STACItemCreator:
             Item: The created STAC item.
         """
         self._add_assets()
+
+        if os.environ.get("MERGE_TIFFS", False).lower() == "true":
+            self.combined_tiff = self._combine_tiffs()
+
         self._add_rio_stac_metadata()
         if self.payload.gdalInfos:
             self._add_gdal_metadata()
+
+        logger.info(f"Created STAC item: {self.item.to_dict()}")
 
         return self.item.to_dict()
 
@@ -88,6 +97,10 @@ class STACItemCreator:
     def _combine_tiffs(self):
         """
         Combine all TIFF files provided in the payload into a single TIFF file.
+
+        Note: The merging operation may have limitations and potential issues.
+        Please be aware that the resulting merged TIFF file may not always be
+        perfect or desirable.
         """
         datasets = []
         for filepath in self.payload.files:
@@ -123,7 +136,11 @@ class STACItemCreator:
         if not self.generated_rio_stac_items:
             raise ValueError("No rio_stac generated items found.")
 
-        generated_item = self.generated_rio_stac_items[0]
+        generated_item = (
+            self.combined_tiff
+            if self.combined_tiff
+            else self.generated_rio_stac_items[0]
+        )
         self.item.properties.update(generated_item.properties)
         self.item.bbox = generated_item.bbox
         self.item.geometry = generated_item.geometry
