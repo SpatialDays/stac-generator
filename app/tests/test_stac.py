@@ -22,11 +22,13 @@ def test_status():
     logger.info("Testing status endpoint")
 
     response = client.get(STATUS_ROUTE)
-
     assert response.status_code == 200
 
 
 def test_create_item():
+    """
+    Tests is the create item request is successful
+    """
     mock_item_dict = {
         "files": [
             "https://path-to-cloud-storage.com/readme.md",
@@ -38,8 +40,5 @@ def test_create_item():
 
     logger.info("Testing create item endpoint")
 
-    # Combine STAC endpoint with the generate endpoint
     response = client.post(STAC_ROUTE + GENERATE_STAC_ENDPOINT, json=mock_item_dict)
-
-    # assert that the response status code is 200
     assert response.status_code == 200
