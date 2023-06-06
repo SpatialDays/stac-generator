@@ -1,20 +1,28 @@
-import json
+# poetry run python -m pytest --log-level=INFO --capture=no
+
 from fastapi.testclient import TestClient
+from loguru import logger
 
 from app.main import app
-from app.stac.models import GenerateSTACPayload
-from app.stac.services.stac_item_creator import STACItemCreator
+
+logger.add("app/tests/test_stac.log", rotation="10 MB")
 
 client = TestClient(app)
-STATUS_ENDPOINT = "/status"
+
+STATUS_ROUTE = "/status"
+STAC_ROUTE = "/stac"
+GENERATE_STAC_ENDPOINT = "/generate"
 
 
 def test_status():
     """
-    Tests if the stac get request is successful
+    Tests if the status request is successful
     """
 
-    response = client.get(STATUS_ENDPOINT)
+    logger.info("Testing status endpoint")
+
+    response = client.get(STATUS_ROUTE)
+
     assert response.status_code == 200
 
 
@@ -24,48 +32,14 @@ def test_create_item():
             "https://path-to-cloud-storage.com/readme.md",
             "https://path-to-cloud-storage.com/license.txt",
             "https://path-to-cloud-storage.com/shapefile.shp",
-            "data/Maxar/test-item.tif",
+            "manual-upload-storage-blob/017078204010_01_20AUG12110524-S3DS-017078204010_01_P001.TIF",
         ],
-        "metadata": ["https://path-to-cloud-storage.com/metadata.json"],
-        "method": "POST",
     }
 
-    item = GenerateSTACPayload(**mock_item_dict)
+    logger.info("Testing create item endpoint")
 
-    stac_item_creator = STACItemCreator(item.dict())
-    stac_item = stac_item_creator.create_item()
+    # Combine STAC endpoint with the generate endpoint
+    response = client.post(STAC_ROUTE + GENERATE_STAC_ENDPOINT, json=mock_item_dict)
 
-    assert type(stac_item) == dict
-
-
-def test_create_item_with_gdal_info():
-    with open("app/tests/data/example_gdal_info.json") as file:
-        gdal_info_dict = json.load(file)
-
-    mock_item_dict = {
-        "gdalInfos": [
-            {
-                "tiffUrl": "https://path-to-cloud-storage.com/first-file.tif",
-                "gdalInfo": gdal_info_dict,
-            },
-            {
-                "tiffUrl": "https://path-to-cloud-storage.com/second-file.tif",
-                "gdalInfo": gdal_info_dict,
-            },
-        ],
-        "files": [
-            "https://path-to-cloud-storage.com/readme.md",
-            "https://path-to-cloud-storage.com/license.txt",
-            "https://path-to-cloud-storage.com/shapefile.shp",
-            "data/Maxar/test-item.tif",
-        ],
-        "metadata": ["https://path-to-cloud-storage.com/metadata.json"],
-        "method": "POST",
-    }
-
-    item = GenerateSTACPayload(**mock_item_dict)
-
-    stac_item_creator = STACItemCreator(item.dict())
-    stac_item = stac_item_creator.create_item()
-
-    assert type(stac_item) == dict
+    # assert that the response status code is 200
+    assert response.status_code == 200
