@@ -18,6 +18,7 @@ downloads/
 eggs/
 .eggs/
 /data/
+/mnt/
 lib/
 lib64/
 parts/
@@ -132,3 +133,7 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Imagery
+*.tif*
+*.TIF*

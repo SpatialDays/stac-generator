@@ -17,24 +17,11 @@ The STAC Generator accepts a JSON payload with the following structure:
     "https://path-to-cloud-storage/first-file.tif",
     "https://path-to-cloud-storage/second-file.tif"
   ],
-  "gdalInfos": [
-    {
-      "tiffUrl": "https://path-to-cloud-storage/first-file.tif",
-      "gdalInfo": {}
-    },
-    {
-      "tiffUrl": "https://path-to-cloud-storage/second-file.tif",
-      "gdalInfo": {}
-    }
-  ],
   "metadata": ["https://path-to-cloud-storage/metadata.json"],
   "method": "POST | PUT | DELETE"
 }
 ```
 ## Optional Payload
-
-The `gdalInfos` field in the payload is optional, but if provided, it allows you to include additional GDAL metadata for the corresponding TIFF files, such as datetime and license information.
-We have a `gdal-info-microservice` for you to use, check that out here https://github.com/SpatialDays/gdal-info-microservice
 
 `metadata` and `method` do nothing for now. This will change.
 
