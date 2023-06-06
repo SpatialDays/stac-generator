@@ -18,6 +18,7 @@ downloads/
 eggs/
 .eggs/
 /data/
+/mnt/
 lib/
 lib64/
 parts/
