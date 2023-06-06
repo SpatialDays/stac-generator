@@ -8,7 +8,12 @@ import xarray as xr
 from pystac import Asset, Item
 import rio_stac
 from ..models import GenerateSTACPayload
-from .utils import get_file_type, is_tiff, get_mounted_file
+from .file_operations import (
+    get_file_type,
+    is_tiff,
+    get_mounted_file,
+    return_tiff_media_type,
+)
 
 from loguru import logger
 
@@ -128,9 +133,10 @@ class STACItemCreator:
                     geom_densify_pts=21,
                 )
                 self.generated_rio_stac_items.append(generated_stac)
-                generated_stac.assets[
-                    "asset"
-                ].media_type = "image/tiff; application=geotiff"  # with cog checker we should add profile=cloud-optimized",
+
+                generated_stac.assets["asset"].media_type = return_tiff_media_type(
+                    filepath
+                )
                 self.item.add_asset(key=filepath, asset=generated_stac.assets["asset"])
 
         if not self.generated_rio_stac_items:
