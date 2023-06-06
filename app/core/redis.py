@@ -19,11 +19,14 @@ def create_redis_connection():
 
 def redis_listener(redis_conn, app):
     while True:
-        item = redis_conn.blpop(app.state.redis_queue_key, timeout=1)
-        if item:
-            logger.info(f"Received item from Redis: {item}")
-            _, job_dict = item
-            item_dict = json.loads(job_dict)
-            stac = STACItemCreator(item_dict).create_item()
-            # rpush the stac item to redis
-            redis_conn.rpush(REDIS_OUTGOING_LIST_NAME, json.dumps(stac))
+        try:
+            item = redis_conn.blpop(app.state.redis_queue_key, timeout=1)
+            if item:
+                logger.info(f"Received item from Redis: {item}")
+                _, job_dict = item
+                item_dict = json.loads(job_dict)
+                stac = STACItemCreator(item_dict).create_item()
+                # rpush the stac item to redis
+                redis_conn.rpush(REDIS_OUTGOING_LIST_NAME, json.dumps(stac))
+        except Exception as e:
+            logger.error(f"Error processing item: {e}")
