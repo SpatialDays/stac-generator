@@ -18,6 +18,9 @@ from .file_operations import (
 
 from loguru import logger
 
+from .metadata_parsers.metadata_parser_manager import MetadataParserManager
+from .metadata_parsers.utils import merge_stac_items
+
 
 class STACItemCreator:
     """
@@ -63,6 +66,12 @@ class STACItemCreator:
             self.combined_tiff = self._combine_tiffs()
 
         self._add_tiff_stac_metadata()
+
+        if self.payload.parser and self.payload.metadata:
+            logger.info("Found metadata parsers")
+            self._add_parsed_metadata(
+                metadata_type=self.payload.parser, metadata=self.payload.metadata
+            )
 
         logger.info(f"Created STAC item: {self.item.to_dict()}")
 
@@ -149,3 +158,16 @@ class STACItemCreator:
             tag_copyright = tags.get("TIFFTAG_COPYRIGHT")
             if tag_copyright is not None:
                 self.item.properties["license"] = tag_copyright
+
+    def _add_parsed_metadata(self, metadata_type, metadata):
+        """
+        Parse the metadata using the appropriate parser and add it to the STAC item.
+        """
+        # Using MetadataParserManager to get the appropriate parser
+        parser = MetadataParserManager.get_parser(metadata_type)
+        metadata_stac_item = parser.parse(metadata)
+
+        # Now merge the metadata_stac_item into the item
+        self.item = Item.from_dict(
+            merge_stac_items(self.item.to_dict(), metadata_stac_item)
+        )
