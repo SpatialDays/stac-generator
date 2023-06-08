@@ -36,6 +36,10 @@ def test_create_item():
             "https://path-to-cloud-storage.com/shapefile.shp",
             "manual-upload-storage-blob/017078204010_01_20AUG12110524-S3DS-017078204010_01_P001.TIF",
         ],
+        "metadata": {
+            "ID": "017078204010_01_20AUG12110524-S3DS-017078204010_01_P001",
+        },
+        "parser": "example",
     }
 
     logger.info("Testing create item endpoint")
