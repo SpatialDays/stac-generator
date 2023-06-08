@@ -16,14 +16,29 @@ The STAC Generator accepts a JSON payload with the following structure:
     "https://path-to-cloud-storage/shapefile.shp",
     "https://path-to-cloud-storage/first-file.tif",
     "https://path-to-cloud-storage/second-file.tif"
-  ],
-  "metadata": ["https://path-to-cloud-storage/metadata.json"],
-  "method": "POST | PUT | DELETE"
+  ]
 }
 ```
-## Optional Payload
 
-`metadata` and `method` do nothing for now. This will change.
+## Environment Variables
+
+This application is configured using the following environment variables:
+
+### Redis Configuration
+
+- `REDIS_HOST`: This is the hostname of your Redis instance. The default is `redis`.
+- `REDIS_PORT`: This is the port number of your Redis instance. The default is `6379`.
+- `REDIS_INCOMING_LIST_NAME`: This is the name of the Redis list that the application will monitor for incoming tasks. The default is `stac_generator_generate`.
+- `REDIS_OUTGOING_LIST_NAME`: This is the name of the Redis list where the application will post the results of its tasks. The default is `stac_generator_output`.
+- `REDIS_DB`: This is the number of the Redis database to use. The default is `0`.
+
+### Other Configurations
+
+- `MERGE_TIFFS`: A boolean variable indicating whether to merge TIFF files. The default is `false`.
+- `CHECK_COG_TYPE`: A boolean variable indicating whether to check if the TIFF files are in Cloud Optimized GeoTIFF (COG) format. The default is `true`.
+- `LOG_COG_INFO`: A boolean variable indicating whether to log additional info about COGs. The default is `false`.
+
+To setup these variables, copy the `.env.example` file to a file named `.env` in the same directory, and replace the right-hand side of each line with your desired settings.
 
 ## Usage with Mounted Directory
 
@@ -32,7 +47,6 @@ STAC Generator is designed to work with a mounted directory. When providing file
 ## Usage of `rio_stac`
 
 STAC Generator utilizes the `rio_stac` package to generate STAC metadata for each TIFF file provided in the payload. The generated metadata is then added to the STAC item. The `rio_stac.create_stac_item()` function is used to create STAC metadata for a given TIFF file.
-
 
 ## Entrypoints
 
