@@ -1,10 +1,12 @@
 import importlib.util
+from loguru import logger
 import os
 
 
 class MetadataParserManager:
     @staticmethod
     def get_parser(metadata_type):
+        logger.info(f"Getting parser for metadata type: {metadata_type}")
         # Check for standard parsers
         standard_parser = MetadataParserManager.load_parser("standard", metadata_type)
         if standard_parser:

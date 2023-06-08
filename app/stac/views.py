@@ -1,11 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, HTTPException
 from .models import GenerateSTACPayload
 from .services.stac_item_creator import STACItemCreator
 
 router = APIRouter()
 
 @router.post("/stac/generate")
-async def generate_stac(item: GenerateSTACPayload = Depends()):
+async def generate_stac(item: GenerateSTACPayload):
     """
     Generate a STAC (SpatioTemporal Asset Catalog) item from the provided payload.
 

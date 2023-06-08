@@ -68,7 +68,6 @@ class STACItemCreator:
         self._add_tiff_stac_metadata()
 
         if self.payload.parser and self.payload.metadata:
-            logger.info("Found metadata parsers")
             self._add_parsed_metadata(
                 metadata_type=self.payload.parser, metadata=self.payload.metadata
             )
