@@ -89,4 +89,3 @@ def init_logging():
     logger.configure(
         handlers=[{"sink": sys.stdout, "level": logging.INFO, "format": format_record}]
     )
-    logger.add("app.log")
