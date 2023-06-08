@@ -18,14 +18,26 @@ app = FastAPI(title="STAC Generator API", version="0.1.0")
 
 @app.on_event("startup")
 def startup_event():
-    app.state.redis_conn = create_redis_connection()
-    if app.state.redis_conn:
-        logger.info("Connected to Redis")
+    try:
+        app.state.redis_conn = create_redis_connection()
+        app.state.redis_conn.ping()
 
-    app.state.redis_queue_key = getenv("REDIS_INCOMING_LIST_NAME")
-    threading.Thread(
-        target=redis_listener, args=(app.state.redis_conn, app), daemon=True
-    ).start()
+        app.state.redis_queue_key = getenv("REDIS_INCOMING_LIST_NAME")
+
+        if app.state.redis_conn:
+            logger.info("Connected to Redis")
+            threading.Thread(
+                target=redis_listener, args=(app.state.redis_conn, app), daemon=True
+            ).start()
+        else:
+            logger.warning(
+                "Could not establish Redis connection, running without Redis."
+            )
+    except Exception as e:
+        logger.error(
+            f"Exception occurred while trying to establish Redis connection: {e}"
+        )
+        logger.warning("Running without Redis.")
 
 
 app.include_router(main_router, tags=["Main"])

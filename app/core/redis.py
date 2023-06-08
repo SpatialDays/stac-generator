@@ -18,6 +18,10 @@ def create_redis_connection():
 
 
 def redis_listener(redis_conn, app):
+    if not redis_conn:
+        logger.warning("No Redis connection, redis_listener will not run.")
+        return
+
     while True:
         try:
             item = redis_conn.blpop(app.state.redis_queue_key, timeout=1)
@@ -28,5 +32,8 @@ def redis_listener(redis_conn, app):
                 stac = STACItemCreator(item_dict).create_item()
                 # rpush the stac item to redis
                 redis_conn.rpush(REDIS_OUTGOING_LIST_NAME, json.dumps(stac))
+        except redis.ConnectionError as e:
+            logger.error(f"Redis connection error: {e}")
+            break
         except Exception as e:
             logger.error(f"Error processing item: {e}")
