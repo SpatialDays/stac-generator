@@ -158,6 +158,10 @@ class STACItemCreator:
             if tag_copyright is not None:
                 self.item.properties["license"] = tag_copyright
 
+            tag_resolution = ds.res
+            if tag_resolution is not None:
+                self.item.properties["gsd"] = tag_resolution[0]
+
     def _add_parsed_metadata(self, metadata_type, metadata):
         """
         Parse the metadata using the appropriate parser and add it to the STAC item.
