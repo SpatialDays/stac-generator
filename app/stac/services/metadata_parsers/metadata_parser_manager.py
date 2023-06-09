@@ -40,3 +40,19 @@ class MetadataParserManager:
             return module.Parser()
 
         return None
+
+    @staticmethod
+    def list_available_parsers():
+        parser_directories = ["standard", "proprietary"]
+        available_parsers = {"standard": [], "proprietary": []}
+
+        for directory in parser_directories:
+            directory_path = os.path.join(os.path.dirname(__file__), directory)
+            for filename in os.listdir(directory_path):
+                if filename.endswith("_parser.py"):
+                    parser_name = filename.replace("_parser.py", "")
+                    available_parsers[directory].append(parser_name)
+
+        logger.info(f"Available metadata parsers: {available_parsers}")
+
+        return available_parsers
