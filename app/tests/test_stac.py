@@ -21,6 +21,8 @@ GENERATE_STAC_ENDPOINT = "/generate"
 def test_status():
     """
     Tests if the status request is successful
+
+    poetry run python -m pytest --log-level=INFO --capture=no app/tests/test_stac.py::test_status
     """
     response = client.get(STATUS_ROUTE)
     assert response.status_code == 200
@@ -29,6 +31,8 @@ def test_status():
 def test_create_item():
     """
     Tests is the create item request is successful
+
+    poetry run python -m pytest --log-level=INFO --capture=no app/tests/test_stac.py::test_create_item
     """
     mock_item_dict = {
         "files": [
@@ -49,6 +53,9 @@ def test_create_item():
 def test_redis_create_item():
     """
     Tests if the item can be added to a Redis list
+
+    poetry run python -m pytest --log-level=INFO --capture=no app/tests/test_stac.py::test_redis_create_item
+
     """
     redis_client = redis.StrictRedis(
         host=os.getenv("REDIS_HOST"),
