@@ -79,3 +79,9 @@ This microservice can works with HTTP and Redis.
 Please refer to `tests/test_stac.py` for how it currently works.
 
 To use Redis, you can submit a request to the channel `stac_generator_stac`
+
+To do a CURL request you can do
+
+```bash
+curl -X POST "http://localhost:8000/stac/generate" -H "Content-Type: application/json" -d '{"files": ["https://path-to-mounted-storage.com/readme.md", "https://path-to-mounted-storage.com/license.txt", "https://path-to-mounted-storage.com/shapefile.shp", "manual-upload-storage-blob/017078204010_01_20AUG12110524-S3DS-017078204010_01_P001.TIF"], "metadata": {"ID": "017078204010_01_20AUG12110524-S3DS-017078204010_01_P001"}, "parser": "example"}'
+```
