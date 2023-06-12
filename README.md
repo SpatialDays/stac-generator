@@ -11,14 +11,38 @@ The STAC Generator accepts a JSON payload with the following structure:
 ```json
 {
   "files": [
-    "https://path-to-cloud-storage/readme.md",
-    "https://path-to-cloud-storage/license.txt",
-    "https://path-to-cloud-storage/shapefile.shp",
-    "https://path-to-cloud-storage/first-file.tif",
-    "https://path-to-cloud-storage/second-file.tif"
-  ]
+    "https://path-to-mounted-storage/readme.md",
+    "https://path-to-mounted-storage/license.txt",
+    "https://path-to-mounted-storage/shapefile.shp",
+    "https://path-to-mounted-storage/first-file.tif",
+    "https://path-to-mounted-storage/second-file.tif"
+  ],
+  "metadata": { "ID": "This is an example metadata object" },
+  "parser": "example"
 }
 ```
+
+### Payload Explanation
+
+The payload submitted as `mock_item_dict` is a JSON object that consists of three keys: `files`, `metadata`, and `parser`. Below is a breakdown of each key:
+
+#### `files`
+
+- **Type**: Array
+- **Description**: The `files` key contains an array of URLs pointing to the data files associated with the STAC item. This includes the actual data files (e.g., GeoTIFFs), as well as any auxiliary files such as metadata documents (e.g., READMEs, licenses) or shapefiles that are related to the item.
+- **Example**: URLs can be absolute URLs pointing to an external source or relative paths pointing to local storage.
+
+#### `metadata`
+
+- **Type**: Object
+- **Description**: The `metadata` key contains an object with additional information relevant to the STAC item. This information is primarily intended for identification and contextualization purposes. It may include an ID, title, description, or any other metadata that can help in the organization and comprehension of the item.
+- **Example**: The metadata or manifest associated with a TIFF order which can contain data such as cloud cover, acquisition date, etc.
+
+#### `parser`
+
+- **Type**: String
+- **Description**: The `parser` key specifies the name of a custom parser script that will be used to process and integrate the data files into a STAC item. The parser script must be stored in a predefined directory in `app/stac/services/metadata_parsers/standard`, and it should be capable of handling the files and metadata provided. This allows users to implement their own logic for parsing and structuring the data, making the process more adaptable to various data formats and structures.
+- **Example**: The value is the name of the parser script (without _parser.py) that should be executed. So for `app/stac/services/metadata_parsers/standard/example_parser.py`, the value would be `example`
 
 ## Environment Variables
 
