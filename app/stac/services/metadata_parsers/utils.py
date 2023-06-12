@@ -14,6 +14,8 @@ def deep_merge_dicts(dict1, dict2):
     for key, value in dict2.items():
         if isinstance(value, dict) and key in merged and isinstance(merged[key], dict):
             merged[key] = deep_merge_dicts(merged[key], value)
+        elif isinstance(value, list) and key in merged and isinstance(merged[key], list):
+            merged[key] = merged[key] + value
         else:
             merged[key] = value
 
