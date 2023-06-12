@@ -9,6 +9,10 @@ from app.core.main_router import router as main_router
 from app.core.redis import create_redis_connection, redis_listener
 from app.core.logger import init_logging
 
+from app.stac.services.metadata_parsers.metadata_parser_manager import (
+    MetadataParserManager,
+)
+
 load_dotenv(".env")
 
 root_router = APIRouter()
@@ -38,6 +42,8 @@ def startup_event():
             f"Exception occurred while trying to establish Redis connection: {e}"
         )
         logger.warning("Running without Redis.")
+
+    MetadataParserManager.list_available_parsers()
 
 
 app.include_router(main_router, tags=["Main"])

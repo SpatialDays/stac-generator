@@ -137,3 +137,6 @@ dmypy.json
 # Imagery
 *.tif*
 *.TIF*
+
+# Proprietary metadata
+app/stac/services/metadata_parsers/proprietary

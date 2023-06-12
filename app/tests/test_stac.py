@@ -1,6 +1,10 @@
 # poetry run python -m pytest --log-level=INFO --capture=no
 
 from fastapi.testclient import TestClient
+
+import redis
+import json
+import os
 from loguru import logger
 
 from app.main import app
@@ -36,9 +40,50 @@ def test_create_item():
             "https://path-to-cloud-storage.com/shapefile.shp",
             "manual-upload-storage-blob/017078204010_01_20AUG12110524-S3DS-017078204010_01_P001.TIF",
         ],
+        "metadata": {
+            "ID": "017078204010_01_20AUG12110524-S3DS-017078204010_01_P001",
+        },
+        "parser": "example",
     }
 
     logger.info("Testing create item endpoint")
 
     response = client.post(STAC_ROUTE + GENERATE_STAC_ENDPOINT, json=mock_item_dict)
     assert response.status_code == 200
+
+
+def test_redis_create_item():
+    """
+    Tests if the item can be added to a Redis list
+    """
+
+    logger.info("Testing Redis rpush")
+
+    # Connect to your Redis server (you may need to specify host and port if different than defaults)
+    redis_client = redis.StrictRedis(
+        host=os.getenv("REDIS_HOST"),
+        port=os.getenv("REDIS_PORT"),
+        db=os.getenv("REDIS_DB"),
+        decode_responses=True,
+    )
+
+    # Specify the key and the payload to be pushed
+    key = "stac_generator_generate"
+    mock_item_dict = {
+        "files": [
+            "https://somestorageaccount.blob.core.windows.net/somecontainer/folder_path/license.txt",
+            "manual-upload-storage-blob/017078204010_01_20AUG12110524-S3DS-017078204010_01_P001.TIF",
+        ],
+        "metadata": {
+            "ID": "017078204010_01_20AUG12110524-S3DS-017078204010_01_P001",
+        },
+        "parser": "example",
+    }
+
+    # Convert the dictionary to a JSON string
+    payload = json.dumps(mock_item_dict)
+
+    # Use rpush to add the JSON string to the Redis list
+    redis_client.rpush(key, payload)
+
+    logger.info("Item successfully added to Redis")
