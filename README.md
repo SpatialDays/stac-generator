@@ -68,6 +68,18 @@ To setup these variables, copy the `.env.example` file to a file named `.env` in
 
 STAC Generator is designed to work with a mounted directory. When providing file paths in the payload, ensure that they correspond to the mounted directory paths rather than direct URLs. To facilitate this, the `get_mounted_file()` function is provided in the `utils` module. It converts a given file path into its corresponding path within the mounted file system.
 
+### Mounted Directory Configuration Setup
+
+To configure the application for blob mounting, follow these steps:
+
+1. Copy the `blob_mounting_configurations_template.json` file and rename it to `blob_mounting_configurations.json`.
+
+2. Open `blob_mounting_configurations.json` and replace the placeholder values with your actual mapped Storage details.
+
+3. Make sure that `blob_mounting_configurations.json` is in the root directory of the project.
+
+Note: Do not commit `blob_mounting_configurations.json` to your source control. This file contains confidential information.
+
 ## Usage of `rio_stac`
 
 STAC Generator utilizes the `rio_stac` package to generate STAC metadata for each TIFF file provided in the payload. The generated metadata is then added to the STAC item. The `rio_stac.create_stac_item()` function is used to create STAC metadata for a given TIFF file.
