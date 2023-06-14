@@ -10,7 +10,7 @@ load_dotenv(".env")
 REDIS_HOST = getenv("REDIS_HOST")
 REDIS_PORT = int(getenv("REDIS_PORT"))
 REDIS_DB = int(getenv("REDIS_DB", 0))
-REDIS_OUTGOING_LIST_NAME = getenv("REDIS_OUTGOING_LIST_NAME")
+REDIS_OUTGOING_LIST_NAME = getenv("REDIS_OUTGOING_LIST_NAME", "stac_generator_output")
 
 
 def create_redis_connection():
