@@ -232,3 +232,19 @@ def return_tiff_media_type(tiff_path: str) -> str:
             return "image/tiff; application=geotiff; profile=cloud-optimized"
 
     return "image/tiff; application=geotiff"
+
+
+def return_asset_name(filename: str, include_extension: bool = True) -> str:
+    """Return the asset name of a file
+
+    Args:
+        filename (str): The filename
+        include_extension (bool, optional): Whether to include the extension in the asset name. Defaults to True.
+
+    Returns:
+        str: The asset name
+    """
+    if include_extension:
+        return os.path.basename(filename)
+
+    return os.path.splitext(os.path.basename(filename))[0]

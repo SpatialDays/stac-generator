@@ -48,10 +48,11 @@ class MetadataParserManager:
 
         for directory in parser_directories:
             directory_path = os.path.join(os.path.dirname(__file__), directory)
-            for filename in os.listdir(directory_path):
-                if filename.endswith("_parser.py"):
-                    parser_name = filename.replace("_parser.py", "")
-                    available_parsers[directory].append(parser_name)
+            if os.path.exists(directory_path):
+                for filename in os.listdir(directory_path):
+                    if filename.endswith("_parser.py"):
+                        parser_name = filename.replace("_parser.py", "")
+                        available_parsers[directory].append(parser_name)
 
         logger.info(f"Available metadata parsers: {available_parsers}")
 

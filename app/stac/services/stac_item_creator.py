@@ -14,6 +14,7 @@ from .file_operations import (
     is_tiff,
     get_mounted_file,
     return_tiff_media_type,
+    return_asset_name,
 )
 
 from loguru import logger
@@ -82,9 +83,10 @@ class STACItemCreator:
         """
         for file in self.payload.files:
             if not is_tiff(file):
+                filename = return_asset_name(file)
                 media_type = get_file_type(file)
                 asset = Asset(href=file, media_type=media_type)
-                self.item.add_asset(key=file, asset=asset)
+                self.item.add_asset(key=filename, asset=asset)
 
     def _combine_tiffs(self):
         """
@@ -121,7 +123,7 @@ class STACItemCreator:
 
         if add_asset:
             generated_stac.assets["asset"].media_type = return_tiff_media_type(filepath)
-            self.item.add_asset(key=filepath, asset=generated_stac.assets["asset"])
+            self.item.add_asset(key=return_asset_name(filepath), asset=generated_stac.assets["asset"])
 
         return generated_stac
 
@@ -154,9 +156,7 @@ class STACItemCreator:
                     tag_datetime, "%Y:%m:%d %H:%M:%S"
                 )
 
-            tag_copyright = tags.get("TIFFTAG_COPYRIGHT")
-            if tag_copyright is not None:
-                self.item.properties["license"] = tag_copyright
+            self.item.properties["license"] = os.getenv('STAC_LICENSE_TYPE', 'proprietary')
 
             tag_resolution = ds.res
             if tag_resolution is not None:
