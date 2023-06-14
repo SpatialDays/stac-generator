@@ -1,3 +1,4 @@
+import json
 import mimetypes
 import os
 from typing import Union, Tuple, List, Dict, Any
@@ -9,6 +10,22 @@ from urllib.parse import urlparse
 
 import rasterio
 from rasterio.env import GDALVersion
+
+from app.stac.services.blob_mounting.blob_mapping_utility import BlobMappingUtility
+
+# Blob mounting configurations
+use_mounted_blob = False
+try:
+    with open("blob_mounting_configurations.json") as json_file:
+        blob_mounting_configurations_list: List[Dict[str, Any]] = json.load(json_file)[
+            "blob_mounting_configurations"
+        ]
+    blob_mapping_utility = BlobMappingUtility(blob_mounting_configurations_list)
+    use_mounted_blob = True
+except Exception as e:
+    logger.warning(
+        f"Could not find blob_mounting_configurations.json. Blob mounting will not be available :: {e}"
+    )
 
 
 def get_file_type(filepath: str):
@@ -52,9 +69,11 @@ def get_mounted_file(filepath: str):
     Returns:
         str: The corresponding path in the mounted file system.
     """
+    if use_mounted_blob:
+        return blob_mapping_utility.get_mounted_filepath_from_url(filepath)
     parsed_url = urlparse(filepath)
-    mounted_path = "/mnt/" + parsed_url.path.lstrip("/")
-    return mounted_path
+    logger.warning(f"blob_mounting_configurations.json not found. Guessing file path.")
+    return "/mnt/" + parsed_url.path.lstrip("/")
 
 
 def is_cog(
