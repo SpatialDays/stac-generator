@@ -39,7 +39,7 @@ def test_create_item():
             "https://path-to-cloud-storage.com/readme.md",
             "https://path-to-cloud-storage.com/license.txt",
             "https://path-to-cloud-storage.com/shapefile.shp",
-            "https://test.blob.core.windows.net/rss-rgbi/SX8888.tif",  # This should be your own file
+            "https://deafrica-sentinel-1.s3.af-south-1.amazonaws.com/s1_rtc/N13E025/2018/01/04/0101B0/s1_rtc_0101B0_N13E025_2018_01_04_ANGLE.tif",  # This should be your own file
         ],
         "metadata": {
             "ID": "017078204010_01_20AUG12110524-S3DS-017078204010_01_P001",
@@ -72,13 +72,12 @@ def test_redis_create_item():
             "https://path-to-cloud-storage.com/readme.md",
             "https://path-to-cloud-storage.com/license.txt",
             "https://path-to-cloud-storage.com/shapefile.shp",
-            "https://test.blob.core.windows.net/rss-rgbi/SX8888.tif",  # This should be your own file
+            "https://deafrica-sentinel-1.s3.af-south-1.amazonaws.com/s1_rtc/N13E025/2018/01/04/0101B0/s1_rtc_0101B0_N13E025_2018_01_04_ANGLE.tif",  # This should be your own file
         ],
         "metadata": {
             "ID": "017078204010_01_20AUG12110524-S3DS-017078204010_01_P001",
         },
         "parser": "example",
-        "metadata_url": "https://test.blob.core.windows.net/SX8888.json",  # This should be your own file
     }
 
     payload = json.dumps(mock_item_dict)

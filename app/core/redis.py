@@ -3,7 +3,9 @@ from loguru import logger
 import json
 from os import getenv
 from dotenv import load_dotenv
+
 from app.stac.services.stac_item_creator import STACItemCreator
+from app.stac.services.publisher.publisher_utility import publish_to_stac_fastapi
 
 load_dotenv(".env")
 
@@ -30,8 +32,15 @@ def redis_listener(redis_conn, app):
                 _, job_dict = item
                 item_dict = json.loads(job_dict)
                 stac = STACItemCreator(item_dict).create_item()
-                # rpush the stac item to redis
-                redis_conn.rpush(REDIS_OUTGOING_LIST_NAME, json.dumps(stac))
+                redis_conn.rpush(REDIS_OUTGOING_LIST_NAME, json.dumps(stac)) # Do we need this?
+
+                if getenv("PUBLISH_TO_STAC_API").lower() == "true":
+                    try:
+                        return publish_to_stac_fastapi(stac, "joplin")
+                    except Exception as e:
+                        logger.error(f"Error publishing to STAC API: {e}")
+                        break
+
         except redis.ConnectionError as e:
             logger.error(f"Redis connection error: {e}")
             break

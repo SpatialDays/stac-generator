@@ -31,6 +31,7 @@ def publish_to_stac_fastapi(stac, collection, max_retries=5, retry_delay=1):
     if publish_to_stac_api:
         item_id = stac["id"]
         item_url = f"{stac_api_url}/collections/{collection}/items/{item_id}"
+        logger.info(f"Publishing to {item_url}")
 
         for _ in range(max_retries):
             try:
