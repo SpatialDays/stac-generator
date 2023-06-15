@@ -25,7 +25,7 @@ The STAC Generator accepts a JSON payload with the following structure:
 
 ### Payload Explanation
 
-The payload submitted as `mock_item_dict` is a JSON object that consists of three keys: `files`, `metadata`, and `parser`. Below is a breakdown of each key:
+The payload submitted as `mock_item_dict` is a JSON object that consists of four keys: `files`, `metadata`, `metadata_url`, and `parser`. At least one of `metadata` or `metadata_url` should be provided, and both can be provided if needed. Below is a breakdown of each key:
 
 #### `files`
 
@@ -33,25 +33,25 @@ The payload submitted as `mock_item_dict` is a JSON object that consists of thre
 - **Description**: The `files` key contains an array of URLs pointing to the data files associated with the STAC item. This includes the actual data files (e.g., GeoTIFFs), as well as any auxiliary files such as metadata documents (e.g., READMEs, licenses) or shapefiles that are related to the item.
 - **Example**: URLs can be absolute URLs pointing to an external source or relative paths pointing to local storage.
 
-#### `metadata`
+#### `metadata` (Optional)
 
 - **Type**: Object
 - **Description**: The `metadata` key contains an object with additional information relevant to the STAC item. This information is primarily intended for identification and contextualization purposes. It may include an ID, title, description, or any other metadata that can help in the organization and comprehension of the item.
 - **Example**: The metadata or manifest associated with a TIFF order which can contain data such as cloud cover, acquisition date, etc.
 
-#### `metadata_url (Optional)`
+#### `metadata_url` (Optional)
 
 - **Type**: String
-- **Description**: The metadata_url key is an optional field that contains the URL pointing to the original metadata document associated with the STAC item. This parameter is used in conjunction with the metadata key. While the metadata key embeds the content of the metadata within the STAC record, the metadata_url key provides a direct link to the original metadata file. This is useful for providing a reference to the original source of the metadata in addition to the embedded content.
-- **Restrictions**: This key is only applicable when using a parser that is designed to support it.
-- **Use Case**: When it is important to not only include the metadata content but also to provide a reference to the original metadata document.
-- **Example**: "metadata_url": "https://path-to-mounted-storage/metadata.json"
+- **Description**: The `metadata_url` key is an optional field that contains the URL pointing to the metadata document associated with the STAC item. If `metadata` is not provided, the service will attempt to fetch the metadata content from this URL. This key can also be used in conjunction with the `metadata` key to provide both the embedded metadata content within the STAC record and a link to the original metadata file. This is useful for cases where it's important to include the metadata content directly and also provide a reference to the original metadata document.
+- **Restrictions**: This key is only applicable when using a parser that is designed to support it. The URL must be an HTTP or HTTPS URL pointing to a JSON metadata file.
+- **Use Case**: When the metadata is available through an HTTP(S) URL and needs to be automatically fetched, or when it is important to include both metadata content and a reference to the original metadata document.
+- **Example**: `"metadata_url": "https://example.com/path/to/metadata.json"`
 
 #### `parser`
 
 - **Type**: String
 - **Description**: The `parser` key specifies the name of a custom parser script that will be used to process and integrate the data files into a STAC item. The parser script must be stored in a predefined directory in `app/stac/services/metadata_parsers/standard`, and it should be capable of handling the files and metadata provided. This allows users to implement their own logic for parsing and structuring the data, making the process more adaptable to various data formats and structures.
-- **Example**: The value is the name of the parser script (without _parser.py) that should be executed. So for `app/stac/services/metadata_parsers/standard/example_parser.py`, the value would be `example`
+- **Example**: The value is the name of the parser script (without \_parser.py) that should be executed. So for `app/stac/services/metadata_parsers/standard/example_parser.py`, the value would be `example`
 
 ## Environment Variables
 

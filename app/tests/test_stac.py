@@ -39,13 +39,13 @@ def test_create_item():
             "https://path-to-cloud-storage.com/readme.md",
             "https://path-to-cloud-storage.com/license.txt",
             "https://path-to-cloud-storage.com/shapefile.shp",
-            "https://test.blob.core.windows.net/rss-rgbi/SX8888-CMASK.tif",  # This should be your own file
+            "https://test.blob.core.windows.net/rss-rgbi/SX8888.tif",  # This should be your own file
         ],
         "metadata": {
             "ID": "017078204010_01_20AUG12110524-S3DS-017078204010_01_P001",
         },
         "parser": "example",
-        "metadata_url": "https://test.blob.core.windows.net/SX8888-CMASK.json",
+        "metadata_url": "https://test.blob.core.windows.net/SX8888.json",  # This should be your own file
     }
     response = client.post(STAC_ROUTE + GENERATE_STAC_ENDPOINT, json=mock_item_dict)
     assert response.status_code == 200
@@ -69,13 +69,16 @@ def test_redis_create_item():
     key = "stac_generator_generate"
     mock_item_dict = {
         "files": [
-            "https://somestorageaccount.blob.core.windows.net/somecontainer/folder_path/license.txt",
-            "manual-upload-storage-blob/017078204010_01_20AUG12110524-S3DS-017078204010_01_P001.TIF",  # This should be your own file
+            "https://path-to-cloud-storage.com/readme.md",
+            "https://path-to-cloud-storage.com/license.txt",
+            "https://path-to-cloud-storage.com/shapefile.shp",
+            "https://test.blob.core.windows.net/rss-rgbi/SX8888.tif",  # This should be your own file
         ],
         "metadata": {
             "ID": "017078204010_01_20AUG12110524-S3DS-017078204010_01_P001",
         },
         "parser": "example",
+        "metadata_url": "https://test.blob.core.windows.net/SX8888.json",  # This should be your own file
     }
 
     payload = json.dumps(mock_item_dict)
