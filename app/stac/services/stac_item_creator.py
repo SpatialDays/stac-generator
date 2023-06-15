@@ -70,7 +70,9 @@ class STACItemCreator:
 
         if self.payload.parser and self.payload.metadata:
             self._add_parsed_metadata(
-                metadata_type=self.payload.parser, metadata=self.payload.metadata
+                metadata_type=self.payload.parser,
+                metadata=self.payload.metadata,
+                metadata_url=self.payload.metadata_url,
             )
 
         logger.info(f"Created STAC item: {self.item.to_dict()}")
@@ -162,13 +164,18 @@ class STACItemCreator:
             if tag_resolution is not None:
                 self.item.properties["gsd"] = tag_resolution[0]
 
-    def _add_parsed_metadata(self, metadata_type, metadata):
+    def _add_parsed_metadata(self, metadata_type, metadata, metadata_url=None):
         """
         Parse the metadata using the appropriate parser and add it to the STAC item.
         """
         # Using MetadataParserManager to get the appropriate parser
         parser = MetadataParserManager.get_parser(metadata_type)
-        metadata_stac_item = parser.parse(metadata)
+
+        # Optional metadata_url can be provided to the parser
+        if metadata_url:
+            metadata_stac_item = parser.parse(metadata, metadata_url=metadata_url)
+        else:
+            metadata_stac_item = parser.parse(metadata)
 
         # Now merge the metadata_stac_item into the item
         self.item = Item.from_dict(
