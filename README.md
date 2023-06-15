@@ -2,8 +2,6 @@
 
 STAC Generator is a microservice that creates SpatioTemporal Asset Catalog (STAC) JSON from provided asset and metadata file paths.
 
-`This is a work in progress, expect improvements over the coming weeks`
-
 ## Payload Structure
 
 The STAC Generator accepts a JSON payload with the following structure:
