@@ -62,10 +62,6 @@ class STACItemCreator:
             Item: The created STAC item.
         """
         self._add_assets()
-
-        if os.environ.get("MERGE_TIFFS", False).lower() == "true":
-            self.combined_tiff = self._combine_tiffs()
-
         self._add_tiff_stac_metadata()
 
         if self.payload.parser and self.payload.metadata:

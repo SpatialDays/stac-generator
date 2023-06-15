@@ -143,3 +143,4 @@ app/stac/services/metadata_parsers/proprietary
 test_pipeline.py
 blob_mounting_configurations.json
 proprietary_metadata.json
+test_payload.json
