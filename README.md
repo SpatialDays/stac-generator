@@ -18,6 +18,7 @@ The STAC Generator accepts a JSON payload with the following structure:
     "https://path-to-mounted-storage/second-file.tif"
   ],
   "metadata": { "ID": "This is an example metadata object" },
+  "metadata_url": "https://path-to-mounted-storage/metadata.json",
   "parser": "example"
 }
 ```
@@ -37,6 +38,14 @@ The payload submitted as `mock_item_dict` is a JSON object that consists of thre
 - **Type**: Object
 - **Description**: The `metadata` key contains an object with additional information relevant to the STAC item. This information is primarily intended for identification and contextualization purposes. It may include an ID, title, description, or any other metadata that can help in the organization and comprehension of the item.
 - **Example**: The metadata or manifest associated with a TIFF order which can contain data such as cloud cover, acquisition date, etc.
+
+#### `metadata_url (Optional)`
+
+- **Type**: String
+- **Description**: The metadata_url key is an optional field that contains the URL pointing to the original metadata document associated with the STAC item. This parameter is used in conjunction with the metadata key. While the metadata key embeds the content of the metadata within the STAC record, the metadata_url key provides a direct link to the original metadata file. This is useful for providing a reference to the original source of the metadata in addition to the embedded content.
+- **Restrictions**: This key is only applicable when using a parser that is designed to support it.
+- **Use Case**: When it is important to not only include the metadata content but also to provide a reference to the original metadata document.
+- **Example**: "metadata_url": "https://path-to-mounted-storage/metadata.json"
 
 #### `parser`
 
