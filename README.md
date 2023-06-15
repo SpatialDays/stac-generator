@@ -67,9 +67,11 @@ This application is configured using the following environment variables:
 
 ### Other Configurations
 
-- `MERGE_TIFFS`: A boolean variable indicating whether to merge TIFF files. The default is `false`.
 - `CHECK_COG_TYPE`: A boolean variable indicating whether to check if the TIFF files are in Cloud Optimized GeoTIFF (COG) format. The default is `true`.
 - `LOG_COG_INFO`: A boolean variable indicating whether to log additional info about COGs. The default is `false`.
+- `PUBLISH_TO_STAC_API`=A boolean variable indicating whether the application should publish the generated STAC items to the STAC API. The default is true. If set to false, the application will not publish the items to the API.
+- `STAC_API_URL`= This is the URL where the STAC API is hosted. The application will communicate with the STAC API through this URL.
+- `USE_MOUNTED_VOLUMES` = A boolean variable indicating whether the application should utilise mounted volumes for faster access to TIFF files.
 
 To setup these variables, copy the `.env.example` file to a file named `.env` in the same directory, and replace the right-hand side of each line with your desired settings.
 
