@@ -39,12 +39,13 @@ def test_create_item():
             "https://path-to-cloud-storage.com/readme.md",
             "https://path-to-cloud-storage.com/license.txt",
             "https://path-to-cloud-storage.com/shapefile.shp",
-            "manual-upload-storage-blob/017078204010_01_20AUG12110524-S3DS-017078204010_01_P001.TIF",  # This should be your own file
+            "https://test.blob.core.windows.net/rss-rgbi/SX8888-CMASK.tif",  # This should be your own file
         ],
         "metadata": {
             "ID": "017078204010_01_20AUG12110524-S3DS-017078204010_01_P001",
         },
         "parser": "example",
+        "metadata_url": "https://test.blob.core.windows.net/SX8888-CMASK.json",
     }
     response = client.post(STAC_ROUTE + GENERATE_STAC_ENDPOINT, json=mock_item_dict)
     assert response.status_code == 200

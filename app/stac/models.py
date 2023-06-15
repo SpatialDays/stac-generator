@@ -4,6 +4,6 @@ from pydantic import BaseModel
 
 class GenerateSTACPayload(BaseModel):
     files: List[str]
-    metadata: Optional[dict]
-    method: Optional[str] = "POST"
+    metadata: dict
+    metadata_url: Optional[str]
     parser: Optional[str]
