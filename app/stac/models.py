@@ -25,10 +25,4 @@ class GenerateSTACPayload(BaseModel):
             except Exception as e:
                 raise ValueError(f"Failed to fetch metadata from {metadata_url}: {e}")
 
-        # At least one of metadata or metadata_url should be provided
-        if not metadata and not metadata_url:
-            raise ValueError(
-                "At least one of metadata or metadata_url should be provided"
-            )
-
         return values
