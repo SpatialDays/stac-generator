@@ -75,8 +75,6 @@ class STACItemCreator:
                 metadata_url=self.payload.metadata_url,
             )
 
-        logger.info(f"Created STAC item: {self.item.to_dict()}")
-
         return self.item.to_dict()
 
     def _add_assets(self):
