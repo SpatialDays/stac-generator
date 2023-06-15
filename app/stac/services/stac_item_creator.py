@@ -2,8 +2,6 @@ import datetime
 import os
 import uuid
 
-import rioxarray as rxr
-import xarray as xr
 import rasterio
 
 from pystac import Asset, Item
