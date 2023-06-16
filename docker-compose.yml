@@ -6,10 +6,12 @@ services:
     container_name: stac_generator
     build:
       context: .
-      dockerfile: .docker/Dockerfile
+      dockerfile: Dockerfile
     command: bash -c "uvicorn app.main:app --host 0.0.0.0 --port 8000"
     volumes:
       - .:/app
     ports:
       - 8000:8000
     restart: always
+    env_file:
+      - .env

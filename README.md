@@ -2,6 +2,13 @@
 
 STAC Generator is a microservice that creates SpatioTemporal Asset Catalog (STAC) JSON from provided asset and metadata file paths.
 
+# Usage
+
+1. Clone the repository
+2. Copy the `.env.example` file to a file named `.env` and replace with your desired settings
+3. Run `docker-compose up --build`
+4. Navigate to `http://localhost:8000/docs` to view the Swagger UI
+
 ## Payload Structure
 
 The STAC Generator accepts a JSON payload with the following structure:
@@ -9,14 +16,14 @@ The STAC Generator accepts a JSON payload with the following structure:
 ```json
 {
   "files": [
-    "https://path-to-mounted-storage/readme.md",
-    "https://path-to-mounted-storage/license.txt",
-    "https://path-to-mounted-storage/shapefile.shp",
-    "https://path-to-mounted-storage/first-file.tif",
-    "https://path-to-mounted-storage/second-file.tif"
+    "https://path-to-storage.com/readme.md",
+    "https://path-to-storage.com/shapefile.shp",
+    "https://deafrica-sentinel-1.s3.af-south-1.amazonaws.com/s1_rtc/N13E025/2018/01/04/0101B0/s1_rtc_0101B0_N13E025_2018_01_04_ANGLE.tif"
   ],
-  "metadata": { "ID": "This is an example metadata object" },
-  "metadata_url": "https://path-to-mounted-storage/metadata.json",
+  "metadata": {
+    "ID": "example_stac_item"
+  },
+  "metadata_url": "https://path-to-storage.com/SX8888.json",
   "parser": "example"
 }
 ```
@@ -108,16 +115,14 @@ curl -X 'POST' \
   -H 'Content-Type: application/json' \
   -d '{
   "files": [
-    "https://path-to-cloud-storage.com/readme.md",
-    "https://path-to-cloud-storage.com/license.txt",
-    "https://path-to-cloud-storage.com/shapefile.shp",
+    "https://path-to-storage.com/readme.md",
+    "https://path-to-storage.com/shapefile.shp",
     "https://deafrica-sentinel-1.s3.af-south-1.amazonaws.com/s1_rtc/N13E025/2018/01/04/0101B0/s1_rtc_0101B0_N13E025_2018_01_04_ANGLE.tif"
-
   ],
   "metadata": {
-    "ID": "017078204010_01_20AUG12110524-S3DS-017078204010_01_P001"
+    "ID": "example_stac_item"
   },
-  "parser": "example",
-  "metadata_url": "https://test.blob.core.windows.net/SX8888.json"
+  "metadata_url": "https://path-to-storage.com/SX8888.json",
+  "parser": "example"
 }'
 ```

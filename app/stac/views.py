@@ -32,7 +32,7 @@ async def generate_stac(item: GenerateSTACPayload):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-    if getenv("PUBLISH_TO_STAC_API"):
+    if getenv("PUBLISH_TO_STAC_API").lower() == "true":
         try:
             return publish_to_stac_fastapi(stac, 'joplin')
         except Exception as e:
