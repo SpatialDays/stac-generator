@@ -38,4 +38,4 @@ async def generate_stac(item: GenerateSTACPayload):
         except Exception as e:
             raise HTTPException(status_code=500, detail=str(e))
 
-    return True
+    return stac

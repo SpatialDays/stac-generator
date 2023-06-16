@@ -77,7 +77,7 @@ To setup these variables, copy the `.env.example` file to a file named `.env` in
 
 When working with large TIFF files, network retrieval can be slow and resource-intensive. To mitigate this, you can optionally configure the application to use mounted volumes. Mounted volumes allow for direct and rapid access to files, which significantly improves performance.
 
-To enable the usage of mounted volumes, you need to set the `USE_MOUNTED_VOLUMES` environment variable to `true`. This instructs the application to access the TIFF files directly from a mounted directory. 
+To enable the usage of mounted volumes, you need to set the `USE_MOUNTED_VOLUMES` environment variable to `true`. This instructs the application to access the TIFF files directly from a mounted directory.
 
 ### Mounted Directory Configuration Setup
 
@@ -102,5 +102,22 @@ To use Redis, you can submit a request to the channel `stac_generator_stac`
 To do a CURL request you can do
 
 ```bash
-curl -X POST "http://localhost:8000/stac/generate" -H "Content-Type: application/json" -d '{"files": ["https://path-to-mounted-storage.com/readme.md", "https://path-to-mounted-storage.com/license.txt", "https://path-to-mounted-storage.com/shapefile.shp", "manual-upload-storage-blob/017078204010_01_20AUG12110524-S3DS-017078204010_01_P001.TIF"], "metadata": {"ID": "017078204010_01_20AUG12110524-S3DS-017078204010_01_P001"}, "parser": "example"}'
+curl -X 'POST' \
+  'http://0.0.0.0:8000/stac/generate' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "files": [
+    "https://path-to-cloud-storage.com/readme.md",
+    "https://path-to-cloud-storage.com/license.txt",
+    "https://path-to-cloud-storage.com/shapefile.shp",
+    "https://deafrica-sentinel-1.s3.af-south-1.amazonaws.com/s1_rtc/N13E025/2018/01/04/0101B0/s1_rtc_0101B0_N13E025_2018_01_04_ANGLE.tif"
+
+  ],
+  "metadata": {
+    "ID": "017078204010_01_20AUG12110524-S3DS-017078204010_01_P001"
+  },
+  "parser": "example",
+  "metadata_url": "https://test.blob.core.windows.net/SX8888.json"
+}'
 ```

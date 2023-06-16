@@ -54,7 +54,7 @@ def publish_to_stac_fastapi(stac, collection, max_retries=5, retry_delay=1):
 
                 # Check if successful
                 if response.status_code in [200, 201]:
-                    return f"{stac_api_url}/collections/{collection}/items/{item_id}"
+                    return item_url
                 elif "DB lock error" in response.text: # TODO: What's the response code for a DB lock error?
                     logger.warning("DB is locked, retrying...")
                     time.sleep(retry_delay)
@@ -73,4 +73,4 @@ def publish_to_stac_fastapi(stac, collection, max_retries=5, retry_delay=1):
         logger.error("Max retries reached. Giving up.")
         return False
 
-    return True
+    return item_url
