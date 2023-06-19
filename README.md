@@ -30,7 +30,7 @@ The STAC Generator accepts a JSON payload with the following structure:
 
 ### Payload Explanation
 
-The payload submitted as `mock_item_dict` is a JSON object that consists of four keys: `files`, `metadata`, `metadata_url`, and `parser`. At least one of `metadata` or `metadata_url` should be provided, and both can be provided if needed. Below is a breakdown of each key:
+The payload submitted as a JSON object consists of four keys: `files`, `metadata`, `metadata_url`, and `parser`. At least one of `metadata` or `metadata_url` should be provided, and both can be provided if needed. Below is a breakdown of each key:
 
 #### `files`
 
@@ -69,6 +69,7 @@ This application is configured using the following environment variables:
 - `REDIS_INCOMING_LIST_NAME`: This is the name of the Redis list that the application will monitor for incoming tasks. The default is `stac_generator_generate`.
 - `REDIS_OUTGOING_LIST_NAME`: This is the name of the Redis list where the application will post the results of its tasks. The default is `stac_generator_output`.
 - `REDIS_DB`: This is the number of the Redis database to use. The default is `0`.
+- `REDIS_PUBLISH_TO_STAC_API`: Ignore for now. This is future functionality.
 
 ### Other Configurations
 
