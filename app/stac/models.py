@@ -10,23 +10,17 @@ class GenerateSTACPayload(BaseModel):
         example=[
             "https://path-to-storage.com/readme.md",
             "https://path-to-storage.com/shapefile.shp",
-            "https://deafrica-sentinel-1.s3.af-south-1.amazonaws.com/s1_rtc/N13E025/2018/01/04/0101B0/s1_rtc_0101B0_N13E025_2018_01_04_ANGLE.tif"
-        ]
+            "https://deafrica-sentinel-1.s3.af-south-1.amazonaws.com/s1_rtc/N13E025/2018/01/04/0101B0/s1_rtc_0101B0_N13E025_2018_01_04_ANGLE.tif",
+        ],
     )
     metadata: Optional[Dict[str, Any]] = Field(
-        None,
-        example={
-            "ID": "example_stac_item"
-        }
+        None, example={"ID": "example_stac_item"}
     )
     metadata_url: Optional[str] = Field(
-        None,
-        example="https://path-to-storage.com/SX8888.json"
+        None, example="https://path-to-storage.com/SX8888.json"
     )
-    parser: Optional[str] = Field(
-        None,
-        example="example"
-    )
+    parser: Optional[str] = Field(None, example="example")
+    collection: Optional[str] = Field(None, example="example")
 
     @root_validator
     def fetch_metadata(cls, values):

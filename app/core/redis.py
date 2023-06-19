@@ -32,9 +32,11 @@ def redis_listener(redis_conn, app):
                 _, job_dict = item
                 item_dict = json.loads(job_dict)
                 stac = STACItemCreator(item_dict).create_item()
-                redis_conn.rpush(REDIS_OUTGOING_LIST_NAME, json.dumps(stac)) # Do we need this?
+                
+                if getenv("REDIS_HTTP_PUBLISH_TO_STAC_API").lower() == "true":
+                    redis_conn.rpush(REDIS_OUTGOING_LIST_NAME, json.dumps(stac)) # Do we need this?
 
-                if getenv("PUBLISH_TO_STAC_API").lower() == "true":
+                if getenv("HTTP_PUBLISH_TO_STAC_API").lower() == "true":
                     try:
                         return publish_to_stac_fastapi(stac, "joplin")
                     except Exception as e:

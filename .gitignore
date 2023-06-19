@@ -144,3 +144,4 @@ test_pipeline.py
 blob_mounting_configurations.json
 proprietary_metadata.json
 test_payload.json
+docker-compose.test.yml

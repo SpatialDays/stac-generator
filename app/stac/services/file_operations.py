@@ -263,3 +263,9 @@ def return_asset_name(filename: str, include_extension: bool = True) -> str:
         return os.path.basename(filename)
 
     return os.path.splitext(os.path.basename(filename))[0]
+
+
+def return_asset_href(filepath):
+    if os.getenv("USE_MOUNTED_VOLUMES").lower() == "true":
+        return blob_mapping_utility.get_url_from_mounted_filepath(filepath)
+    return filepath

@@ -6,6 +6,8 @@ from .models import GenerateSTACPayload
 from .services.stac_item_creator import STACItemCreator
 from .services.publisher.publisher_utility import publish_to_stac_fastapi
 
+import json
+
 router = APIRouter()
 
 
@@ -31,10 +33,13 @@ async def generate_stac(item: GenerateSTACPayload):
         stac = STACItemCreator(item.dict()).create_item()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
-    if getenv("PUBLISH_TO_STAC_API").lower() == "true":
+    
+    collection = item.collection or item.parser or "default"
+    logger.info(f"Publishing to {collection} collection")
+    
+    if getenv("HTTP_PUBLISH_TO_STAC_API").lower() == "true":
         try:
-            return publish_to_stac_fastapi(stac, 'joplin')
+            return publish_to_stac_fastapi(stac, collection)
         except Exception as e:
             raise HTTPException(status_code=500, detail=str(e))
 
