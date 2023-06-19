@@ -35,7 +35,6 @@ async def generate_stac(item: GenerateSTACPayload):
         raise HTTPException(status_code=500, detail=str(e))
     
     collection = item.collection or item.parser or "default"
-    logger.info(f"Publishing to {collection} collection")
     
     if getenv("HTTP_PUBLISH_TO_STAC_API").lower() == "true":
         try:
