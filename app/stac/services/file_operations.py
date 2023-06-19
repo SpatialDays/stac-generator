@@ -15,7 +15,10 @@ from app.stac.services.blob_mounting.blob_mapping_utility import BlobMappingUtil
 
 # Blob mounting configurations
 try:
-    with open("blob_mounting_configurations.json") as json_file:
+    blob_mounting_configurations_path = os.getenv(
+        "BLOB_MOUNTING_CONFIGURATIONS_JSON_PATH", "blob_mounting_configurations.json"
+    )
+    with open(blob_mounting_configurations_path) as json_file:
         blob_mounting_configurations_list: List[Dict[str, Any]] = json.load(json_file)[
             "blob_mounting_configurations"
         ]
