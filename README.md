@@ -66,8 +66,8 @@ This application is configured using the following environment variables:
 
 - `REDIS_HOST`: This is the hostname of your Redis instance. The default is `redis`.
 - `REDIS_PORT`: This is the port number of your Redis instance. The default is `6379`.
-- `REDIS_INCOMING_LIST_NAME`: This is the name of the Redis list that the application will monitor for incoming tasks. The default is `stac_generator_generate`.
-- `REDIS_OUTGOING_LIST_NAME`: This is the name of the Redis list where the application will post the results of its tasks. The default is `stac_generator_output`.
+- `REDIS_INPUT_LIST_NAME`: This is the name of the Redis list that the application will monitor for incoming tasks. The default is `stac_generator_generate`.
+- `REDIS_OUTPUT_LIST_NAME`: This is the name of the Redis list where the application will post the results of its tasks. The default is `stac_generator_output`.
 - `REDIS_DB`: This is the number of the Redis database to use. The default is `0`.
 - `REDIS_PUBLISH_TO_STAC_API`: Ignore for now. This is future functionality.
 

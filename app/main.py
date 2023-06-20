@@ -26,7 +26,7 @@ def startup_event():
         app.state.redis_conn = create_redis_connection()
         app.state.redis_conn.ping()
 
-        app.state.redis_queue_key = getenv("REDIS_INCOMING_LIST_NAME")
+        app.state.redis_queue_key = getenv("REDIS_INPUT_LIST_NAME")
 
         if app.state.redis_conn:
             logger.info("Connected to Redis")

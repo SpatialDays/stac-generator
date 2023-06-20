@@ -12,7 +12,7 @@ load_dotenv(".env")
 REDIS_HOST = getenv("REDIS_HOST")
 REDIS_PORT = int(getenv("REDIS_PORT"))
 REDIS_DB = int(getenv("REDIS_DB", 0))
-REDIS_OUTGOING_LIST_NAME = getenv("REDIS_OUTGOING_LIST_NAME", "stac_generator_output")
+REDIS_OUTPUT_LIST_NAME = getenv("REDIS_OUTPUT_LIST_NAME", "stac_generator_output")
 
 
 def create_redis_connection():
@@ -32,9 +32,9 @@ def redis_listener(redis_conn, app):
                 _, job_dict = item
                 item_dict = json.loads(job_dict)
                 stac = STACItemCreator(item_dict).create_item()
-                
+
                 if getenv("REDIS_HTTP_PUBLISH_TO_STAC_API").lower() == "true":
-                    redis_conn.rpush(REDIS_OUTGOING_LIST_NAME, json.dumps(stac)) # Do we need this?
+                    redis_conn.rpush(REDIS_OUTPUT_LIST_NAME, json.dumps(stac)) # Do we need this?
 
                 if getenv("HTTP_PUBLISH_TO_STAC_API").lower() == "true":
                     try:
