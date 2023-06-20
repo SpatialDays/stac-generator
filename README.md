@@ -30,7 +30,7 @@ The STAC Generator accepts a JSON payload with the following structure:
 
 ### Payload Explanation
 
-The payload submitted as `mock_item_dict` is a JSON object that consists of four keys: `files`, `metadata`, `metadata_url`, and `parser`. At least one of `metadata` or `metadata_url` should be provided, and both can be provided if needed. Below is a breakdown of each key:
+The payload submitted as a JSON object consists of four keys: `files`, `metadata`, `metadata_url`, and `parser`. At least one of `metadata` or `metadata_url` should be provided, and both can be provided if needed. Below is a breakdown of each key:
 
 #### `files`
 
@@ -47,7 +47,7 @@ The payload submitted as `mock_item_dict` is a JSON object that consists of four
 #### `metadata_url` (Optional)
 
 - **Type**: String
-- **Description**: The `metadata_url` key is an optional field that contains the URL pointing to the metadata document associated with the STAC item. If `metadata` is not provided, the service will attempt to fetch the metadata content from this URL. This key can also be used in conjunction with the `metadata` key to provide both the embedded metadata content within the STAC record and a link to the original metadata file. This is useful for cases where it's important to include the metadata content directly and also provide a reference to the original metadata document.
+- **Description**: The `metadata_url` key is an optional field that contains the URL pointing to the metadata document associated with the STAC item. If `metadata` is not provided, the service will attempt to fetch the metadata content from this URL. This key can also be used in conjunction with the `metadata` key to provide both the embedded metadata content within the STAC record and a link to the original metadata fwile. This is useful for cases where it's important to include the metadata content directly and also provide a reference to the original metadata document.
 - **Restrictions**: This key is only applicable when using a parser that is designed to support it. The URL must be an HTTP or HTTPS URL pointing to a JSON metadata file.
 - **Use Case**: When the metadata is available through an HTTP(S) URL and needs to be automatically fetched, or when it is important to include both metadata content and a reference to the original metadata document.
 - **Example**: `"metadata_url": "https://example.com/path/to/metadata.json"`
@@ -66,15 +66,16 @@ This application is configured using the following environment variables:
 
 - `REDIS_HOST`: This is the hostname of your Redis instance. The default is `redis`.
 - `REDIS_PORT`: This is the port number of your Redis instance. The default is `6379`.
-- `REDIS_INCOMING_LIST_NAME`: This is the name of the Redis list that the application will monitor for incoming tasks. The default is `stac_generator_generate`.
-- `REDIS_OUTGOING_LIST_NAME`: This is the name of the Redis list where the application will post the results of its tasks. The default is `stac_generator_output`.
+- `REDIS_INPUT_LIST_NAME`: This is the name of the Redis list that the application will monitor for incoming tasks. The default is `stac_generator_generate`.
+- `REDIS_OUTPUT_LIST_NAME`: This is the name of the Redis list where the application will post the results of its tasks. The default is `stac_generator_output`.
 - `REDIS_DB`: This is the number of the Redis database to use. The default is `0`.
+- `REDIS_PUBLISH_TO_STAC_API`: Ignore for now. This is future functionality.
 
 ### Other Configurations
 
 - `CHECK_COG_TYPE`: A boolean variable indicating whether to check if the TIFF files are in Cloud Optimized GeoTIFF (COG) format. The default is `true`.
 - `LOG_COG_INFO`: A boolean variable indicating whether to log additional info about COGs. The default is `false`.
-- `PUBLISH_TO_STAC_API`=A boolean variable indicating whether the application should publish the generated STAC items to the STAC API. The default is true. If set to false, the application will not publish the items to the API.
+- `HTTP_PUBLISH_TO_STAC_API`=A boolean variable indicating whether the application should publish the generated STAC items to the STAC API. The default is true. If set to false, the application will not publish the items to the API.
 - `STAC_API_URL`= This is the URL where the STAC API is hosted. The application will communicate with the STAC API through this URL.
 - `USE_MOUNTED_VOLUMES` = A boolean variable indicating whether the application should utilise mounted volumes for faster access to TIFF files.
 

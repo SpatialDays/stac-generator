@@ -13,6 +13,7 @@ from .file_operations import (
     get_mounted_file,
     return_tiff_media_type,
     return_asset_name,
+    return_asset_href,
 )
 
 from loguru import logger
@@ -29,7 +30,6 @@ class STACItemCreator:
         payload (GenerateSTACPayload): The input data for creating a STAC item.
         item (Item): The STAC item being created.
         generated_rio_stac_items (list): List of generated items using the rio_stac package.
-        combined_tiff (str): Path to the combined TIFF file from all input TIFF files.
     """
 
     def __init__(self, payload: dict):
@@ -50,7 +50,6 @@ class STACItemCreator:
             properties={},
         )
         self.generated_rio_stac_items = []
-        self.combined_tiff = None
 
     def create_item(self) -> Item:
         """
@@ -97,6 +96,7 @@ class STACItemCreator:
 
         if add_asset:
             generated_stac.assets["asset"].media_type = return_tiff_media_type(filepath)
+            generated_stac.assets["asset"].href = filepath
             self.item.add_asset(
                 key=return_asset_name(filepath), asset=generated_stac.assets["asset"]
             )
@@ -107,14 +107,11 @@ class STACItemCreator:
         """
         Generate STAC metadata for each TIFF file using rio_stac, and add to the STAC item.
         """
+        tiff_filepath = None
         for filepath in self.payload.files:
             if is_tiff(filepath):
                 generated_item = self._generate_and_add_metadata(filepath)
-
-        if self.combined_tiff:
-            generated_item = self._generate_and_add_metadata(
-                self.combined_tiff, add_asset=False
-            )
+                tiff_filepath = filepath
 
         if not self.generated_rio_stac_items:
             raise ValueError("No rio_stac generated items found.")
@@ -124,21 +121,22 @@ class STACItemCreator:
         self.item.geometry = generated_item.geometry
         self.item.stac_extensions = generated_item.stac_extensions
 
-        with rasterio.open(get_mounted_file(filepath)) as ds:
-            tags = ds.tags()
-            tag_datetime = tags.get("TIFFTAG_DATETIME")  # 2022:09:09 15:27:53
-            if tag_datetime is not None:
-                self.item.datetime = datetime.datetime.strptime(
-                    tag_datetime, "%Y:%m:%d %H:%M:%S"
+        if tiff_filepath:
+            with rasterio.open(get_mounted_file(tiff_filepath)) as ds:
+                tags = ds.tags()
+                tag_datetime = tags.get("TIFFTAG_DATETIME")  # 2022:09:09 15:27:53
+                if tag_datetime is not None:
+                    self.item.datetime = datetime.datetime.strptime(
+                        tag_datetime, "%Y:%m:%d %H:%M:%S"
+                    )
+
+                self.item.properties["license"] = os.getenv(
+                    "STAC_LICENSE_TYPE", "proprietary"
                 )
 
-            self.item.properties["license"] = os.getenv(
-                "STAC_LICENSE_TYPE", "proprietary"
-            )
-
-            tag_resolution = ds.res
-            if tag_resolution is not None:
-                self.item.properties["gsd"] = tag_resolution[0]
+                tag_resolution = ds.res
+                if tag_resolution is not None:
+                    self.item.properties["gsd"] = tag_resolution[0]
 
     def _add_parsed_metadata(self, metadata_type, metadata, metadata_url=None):
         """
