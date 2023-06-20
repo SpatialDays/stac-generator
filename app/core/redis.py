@@ -33,7 +33,7 @@ def redis_listener(redis_conn, app):
                 item_dict = json.loads(job_dict)
                 stac = STACItemCreator(item_dict).create_item()
 
-                collection = item.collection or item.parser or "default"
+                collection = item_dict['collection'] or item_dict['parser'] or "default"
 
                 if getenv("REDIS_PUBLISH_TO_STAC_API").lower() == "true":
                     redis_conn.rpush(
