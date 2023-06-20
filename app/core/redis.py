@@ -33,12 +33,19 @@ def redis_listener(redis_conn, app):
                 item_dict = json.loads(job_dict)
                 stac = STACItemCreator(item_dict).create_item()
 
-                if getenv("REDIS_HTTP_PUBLISH_TO_STAC_API").lower() == "true":
-                    redis_conn.rpush(REDIS_OUTPUT_LIST_NAME, json.dumps(stac)) # Do we need this?
+                collection = (
+                    item_dict.get("collection") or item_dict.get("parser") or "default"
+                )
+
+                if getenv("REDIS_PUBLISH_TO_STAC_API").lower() == "true":
+                    redis_conn.rpush(
+                        REDIS_OUTPUT_LIST_NAME,
+                        json.dumps({"collection": collection, "stac": stac}),
+                    )
 
                 if getenv("HTTP_PUBLISH_TO_STAC_API").lower() == "true":
                     try:
-                        return publish_to_stac_fastapi(stac, "joplin")
+                        publish_to_stac_fastapi(stac, collection)
                     except Exception as e:
                         logger.error(f"Error publishing to STAC API: {e}")
                         break
