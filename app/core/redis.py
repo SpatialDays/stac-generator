@@ -45,7 +45,7 @@ def redis_listener(redis_conn, app):
 
                 if getenv("HTTP_PUBLISH_TO_STAC_API").lower() == "true":
                     try:
-                        return publish_to_stac_fastapi(stac, collection)
+                        publish_to_stac_fastapi(stac, collection)
                     except Exception as e:
                         logger.error(f"Error publishing to STAC API: {e}")
                         break
