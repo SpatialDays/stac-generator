@@ -24,6 +24,10 @@ def redis_listener(redis_conn, app):
         logger.warning("No Redis connection, redis_listener will not run.")
         return
 
+    if not app.state.redis_queue_key:
+        logger.warning("No Redis queue key, redis_listener will not run.")
+        return
+
     while True:
         try:
             item = redis_conn.blpop(app.state.redis_queue_key, timeout=1)
