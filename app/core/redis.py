@@ -38,16 +38,16 @@ def redis_listener(redis_conn, app):
                 stac = STACItemCreator(item_dict).create_item()
 
                 collection = (
-                    item_dict.get("collection") or item_dict.get("parser") or "default"
+                        item_dict.get("collection") or item_dict.get("parser") or "default"
                 )
 
-                if getenv("REDIS_PUBLISH_TO_STAC_API").lower() == "true":
+                if getenv("REDIS_PUBLISH_TO_STAC_API") is not None and getenv("REDIS_PUBLISH_TO_STAC_API").lower() == "true":
                     redis_conn.rpush(
                         REDIS_OUTPUT_LIST_NAME,
                         json.dumps({"collection": collection, "stac": stac}),
                     )
 
-                if getenv("HTTP_PUBLISH_TO_STAC_API").lower() == "true":
+                if getenv("HTTP_PUBLISH_TO_STAC_API") is not None and getenv("HTTP_PUBLISH_TO_STAC_API").lower() == "true":
                     try:
                         publish_to_stac_fastapi(stac, collection)
                     except Exception as e:
@@ -57,5 +57,8 @@ def redis_listener(redis_conn, app):
         except redis.ConnectionError as e:
             logger.error(f"Redis connection error: {e}")
             break
-        except Exception as e:
-            logger.error(f"Error processing item: {e}")
+        # not catching this makes it eaiser to debug, as this exception is raised any of the functions and in the try
+        # block fail subfunctions in the try block fail except Exception as e: logger.error(f"Error processing item:
+
+        # except Exception as e:
+        #     logger.error(f"Error processing item: {e}")
