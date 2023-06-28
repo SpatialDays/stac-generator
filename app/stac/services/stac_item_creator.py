@@ -13,7 +13,6 @@ from .file_operations import (
     get_mounted_file,
     return_tiff_media_type,
     return_asset_name,
-    return_asset_href,
 )
 
 from loguru import logger
@@ -85,6 +84,8 @@ class STACItemCreator:
         """
         Generate STAC metadata for the given TIFF file using rio_stac and add to the STAC item.
         """
+        parser = MetadataParserManager.get_parser(self.payload.parser)
+
         generated_stac = rio_stac.create_stac_item(
             get_mounted_file(filepath),
             with_eo=True,
@@ -95,10 +96,15 @@ class STACItemCreator:
         self.generated_rio_stac_items.append(generated_stac)
 
         if add_asset:
+            if hasattr(parser, 'get_asset_common_name_from_filename'):
+                asset_key = parser.get_asset_common_name_from_filename(return_asset_name(filepath))
+            else:
+                asset_key = return_asset_name(filepath)
+
             generated_stac.assets["asset"].media_type = return_tiff_media_type(filepath)
             generated_stac.assets["asset"].href = filepath
             self.item.add_asset(
-                key=return_asset_name(filepath), asset=generated_stac.assets["asset"]
+                key=asset_key, asset=generated_stac.assets["asset"]
             )
 
         return generated_stac
