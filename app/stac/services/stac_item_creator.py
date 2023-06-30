@@ -13,7 +13,6 @@ from .file_operations import (
     get_mounted_file,
     return_tiff_media_type,
     return_asset_name,
-    return_asset_href,
 )
 
 from loguru import logger
@@ -74,17 +73,23 @@ class STACItemCreator:
         """
         Add assets to the STAC item from the file paths provided in the payload.
         """
+        parser = MetadataParserManager.get_parser(self.payload.parser)
+        
         for file in self.payload.files:
             if not is_tiff(file):
+
                 filename = return_asset_name(file)
+                asset_key = parser.get_asset_common_name_from_filename(return_asset_name(filename))
                 media_type = get_file_type(file)
                 asset = Asset(href=file, media_type=media_type)
-                self.item.add_asset(key=filename, asset=asset)
+                self.item.add_asset(key=asset_key, asset=asset)
 
     def _generate_and_add_metadata(self, filepath, add_asset=True):
         """
         Generate STAC metadata for the given TIFF file using rio_stac and add to the STAC item.
         """
+        parser = MetadataParserManager.get_parser(self.payload.parser)
+
         generated_stac = rio_stac.create_stac_item(
             get_mounted_file(filepath),
             with_eo=True,
@@ -95,10 +100,15 @@ class STACItemCreator:
         self.generated_rio_stac_items.append(generated_stac)
 
         if add_asset:
+            if hasattr(parser, 'get_asset_common_name_from_filename'):
+                asset_key = parser.get_asset_common_name_from_filename(return_asset_name(filepath))
+            else:
+                asset_key = return_asset_name(filepath)
+
             generated_stac.assets["asset"].media_type = return_tiff_media_type(filepath)
             generated_stac.assets["asset"].href = filepath
             self.item.add_asset(
-                key=return_asset_name(filepath), asset=generated_stac.assets["asset"]
+                key=asset_key, asset=generated_stac.assets["asset"]
             )
 
         return generated_stac
