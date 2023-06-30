@@ -73,12 +73,16 @@ class STACItemCreator:
         """
         Add assets to the STAC item from the file paths provided in the payload.
         """
+        parser = MetadataParserManager.get_parser(self.payload.parser)
+        
         for file in self.payload.files:
             if not is_tiff(file):
+
                 filename = return_asset_name(file)
+                asset_key = parser.get_asset_common_name_from_filename(return_asset_name(filename))
                 media_type = get_file_type(file)
                 asset = Asset(href=file, media_type=media_type)
-                self.item.add_asset(key=filename, asset=asset)
+                self.item.add_asset(key=asset_key, asset=asset)
 
     def _generate_and_add_metadata(self, filepath, add_asset=True):
         """
