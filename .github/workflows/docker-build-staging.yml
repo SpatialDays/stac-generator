@@ -51,3 +51,13 @@ jobs:
           cache-to: type=registry,ref=${{ secrets.EO_PROJ_STAGING_DOCKER_REGISTRY_URL }}/stac-generator:cache,mode=max
           push: true
           tags: ${{ secrets.EO_PROJ_STAGING_DOCKER_REGISTRY_URL }}/stac-generator:${{ env.SHORT_SHA }}
+
+      - name: Build and push Docker image under tag ${{ env.SHORT_SHA }} - redis
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: Dockerfile
+          cache-from: type=registry,ref=${{ secrets.EO_PROJ_STAGING_DOCKER_REGISTRY_URL }}/stac-generator:cache
+          cache-to: type=registry,ref=${{ secrets.EO_PROJ_STAGING_DOCKER_REGISTRY_URL }}/stac-generator:cache,mode=max
+          push: true
+          tags: ${{ secrets.EO_PROJ_STAGING_DOCKER_REGISTRY_URL }}/stac-generator-redis:${{ env.SHORT_SHA }}

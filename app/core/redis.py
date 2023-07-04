@@ -7,30 +7,20 @@ from dotenv import load_dotenv
 from app.stac.services.stac_item_creator import STACItemCreator
 from app.stac.services.publisher.publisher_utility import publish_to_stac_fastapi
 
-load_dotenv(".env")
+load_dotenv()
 
-REDIS_HOST = getenv("REDIS_HOST")
-REDIS_PORT = int(getenv("REDIS_PORT"))
-REDIS_DB = int(getenv("REDIS_DB", 0))
+REDIS_INPUT_LIST_NAME = getenv("REDIS_INPUT_LIST_NAME", "stac_generator_input")
 REDIS_OUTPUT_LIST_NAME = getenv("REDIS_OUTPUT_LIST_NAME", "stac_generator_output")
 
-
-def create_redis_connection():
-    return redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=REDIS_DB)
-
-
-def redis_listener(redis_conn, app):
+def redis_listener(redis_conn):
     if not redis_conn:
         logger.warning("No Redis connection, redis_listener will not run.")
         return
-
-    if not app.state.redis_queue_key:
-        logger.warning("No Redis queue key, redis_listener will not run.")
-        return
-
+    logger.info(f"Running redis_listener on {REDIS_INPUT_LIST_NAME}")
+    logger.info(f"Publishing to {REDIS_OUTPUT_LIST_NAME}")
     while True:
         try:
-            item = redis_conn.blpop(app.state.redis_queue_key, timeout=1)
+            item = redis_conn.blpop(REDIS_INPUT_LIST_NAME, timeout=1)
             if item:
                 logger.info(f"Received item from Redis: {item}")
                 _, job_dict = item
