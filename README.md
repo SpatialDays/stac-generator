@@ -2,6 +2,8 @@
 
 STAC Generator is a microservice that creates SpatioTemporal Asset Catalog (STAC) JSON from provided asset and metadata file paths.
 
+With both HTTP and REDIS entrypoints, this microservice can be used in a variety of ways to generate STAC items from the incoming payload.
+
 # Usage
 
 1. Clone the repository
@@ -63,6 +65,18 @@ The payload submitted as a JSON object consists of four keys: `files`, `metadata
 This application is configured using the following environment variables:
 
 ### Redis Configuration (Optional)
+
+In addition to HTTP requests, this application can also be configured to listen for incoming tasks on a Redis channel.
+
+In case if you want to use the Redis listener, the entrypoint is:
+
+```bash
+python3 -m app.redis_entrypoint
+```
+
+See additional [./Dockerfile-redis](./Dockerfile-redis) for more details.
+
+In case you want to start a Redis listener instead of the HTTP server, you can use the following environment variables:
 
 - `REDIS_HOST`: This is the hostname of your Redis instance. The default is `redis`.
 - `REDIS_PORT`: This is the port number of your Redis instance. The default is `6379`.
