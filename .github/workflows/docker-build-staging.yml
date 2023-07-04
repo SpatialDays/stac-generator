@@ -57,7 +57,7 @@ jobs:
         with:
           context: .
           file: Dockerfile
-          cache-from: type=registry,ref=${{ secrets.EO_PROJ_STAGING_DOCKER_REGISTRY_URL }}/stac-generator:cache
-          cache-to: type=registry,ref=${{ secrets.EO_PROJ_STAGING_DOCKER_REGISTRY_URL }}/stac-generator:cache,mode=max
+          cache-from: type=registry,ref=${{ secrets.EO_PROJ_STAGING_DOCKER_REGISTRY_URL }}/stac-generator-redis:cache
+          cache-to: type=registry,ref=${{ secrets.EO_PROJ_STAGING_DOCKER_REGISTRY_URL }}/stac-generator-redis:cache,mode=max
           push: true
           tags: ${{ secrets.EO_PROJ_STAGING_DOCKER_REGISTRY_URL }}/stac-generator-redis:${{ env.SHORT_SHA }}
