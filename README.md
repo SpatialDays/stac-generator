@@ -2,6 +2,8 @@
 
 STAC Generator is a microservice that creates SpatioTemporal Asset Catalog (STAC) JSON from provided asset and metadata file paths.
 
+With both HTTP and REDIS entrypoints, this microservice can be used in a variety of ways to generate STAC items from the incoming payload.
+
 # Usage
 
 1. Clone the repository
@@ -64,12 +66,24 @@ This application is configured using the following environment variables:
 
 ### Redis Configuration (Optional)
 
+In addition to HTTP requests, this application can also be configured to listen for incoming tasks on a Redis channel.
+
+In case if you want to use the Redis listener, the entrypoint is:
+
+```bash
+python3 -m app.redis_entrypoint
+```
+
+See additional [./Dockerfile-redis](./Dockerfile-redis) for more details.
+
+In case you want to start a Redis listener instead of the HTTP server, you can use the following environment variables:
+
 - `REDIS_HOST`: This is the hostname of your Redis instance. The default is `redis`.
 - `REDIS_PORT`: This is the port number of your Redis instance. The default is `6379`.
 - `REDIS_INPUT_LIST_NAME`: This is the name of the Redis list that the application will monitor for incoming tasks. The default is `stac_generator_generate`.
 - `REDIS_OUTPUT_LIST_NAME`: This is the name of the Redis list where the application will post the results of its tasks. The default is `stac_generator_output`.
-- `REDIS_DB`: This is the number of the Redis database to use. The default is `0`.
-- `REDIS_PUBLISH_TO_STAC_API`: Ignore for now. This is future functionality.
+- `HTTP_PUBLISH_TO_STAC_API`: A boolean variable indicating whether the application should publish the generated STAC items to the STAC API via HTTP request.
+- `REDIS_PUBLISH_TO_STAC_API`: A boolean variable indicating whether the application should publish the generated STAC items to the REDIS channel.
 
 ### Other Configurations
 
@@ -127,4 +141,3 @@ curl -X 'POST' \
   "parser": "example"
 }'
 ```
-
