@@ -82,8 +82,8 @@ In case you want to start a Redis listener instead of the HTTP server, you can u
 - `REDIS_PORT`: This is the port number of your Redis instance. The default is `6379`.
 - `REDIS_INPUT_LIST_NAME`: This is the name of the Redis list that the application will monitor for incoming tasks. The default is `stac_generator_generate`.
 - `REDIS_OUTPUT_LIST_NAME`: This is the name of the Redis list where the application will post the results of its tasks. The default is `stac_generator_output`.
-- `REDIS_DB`: This is the number of the Redis database to use. The default is `0`.
-- `REDIS_PUBLISH_TO_STAC_API`: Ignore for now. This is future functionality.
+- `HTTP_PUBLISH_TO_STAC_API`: A boolean variable indicating whether the application should publish the generated STAC items to the STAC API via HTTP request.
+- `REDIS_PUBLISH_TO_STAC_API`: A boolean variable indicating whether the application should publish the generated STAC items to the REDIS channel.
 
 ### Other Configurations
 
