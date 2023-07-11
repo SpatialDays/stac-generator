@@ -14,10 +14,15 @@ ENV PYTHONUNBUFFERED=1
 ENV PYTHONPATH=/app
 
 WORKDIR /app
-COPY . /app
+# copying poetry stuff before the rest of the code to take advantage of docker caching
+# COPY poetry.lock .
+COPY pyproject.toml .
 
 RUN poetry config virtualenvs.create false \
   && poetry install --only main
+
+COPY . /app
+
 
 EXPOSE 8000
 
