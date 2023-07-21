@@ -23,7 +23,4 @@ RUN poetry config virtualenvs.create false \
 
 COPY . /app
 
-
-EXPOSE 8000
-
 CMD bash -c "python3 -m app.redis_entrypoint"
