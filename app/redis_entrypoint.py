@@ -1,8 +1,12 @@
 import redis
 import os
-from app.core.redis import redis_listener
+
 import logging
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.debug("Starting Redis listener")
+logging.info("Starting Redis listener")
+
+from app.core.redis import redis_listener
 
 _REDIS_HOST = os.getenv("REDIS_HOST")
 _REDIS_PORT = int(os.getenv("REDIS_PORT"))

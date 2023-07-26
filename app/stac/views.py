@@ -1,5 +1,4 @@
 from os import getenv
-from loguru import logger
 
 from fastapi import APIRouter, HTTPException
 from .models import GenerateSTACPayload

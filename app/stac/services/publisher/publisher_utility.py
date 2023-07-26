@@ -2,9 +2,8 @@ import json
 import os
 import time
 import requests
-import pystac
-from loguru import logger
-
+import logging
+logger = logging.getLogger(__name__)
 
 def publish_to_stac_fastapi(stac, collection, max_retries=5, retry_delay=1):
     """

@@ -1,5 +1,6 @@
 import importlib.util
-from loguru import logger
+import logging
+logger = logging.getLogger(__name__)
 import os
 
 

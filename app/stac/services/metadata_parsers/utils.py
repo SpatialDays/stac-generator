@@ -1,6 +1,3 @@
-from loguru import logger
-
-
 def deep_merge_dicts(dict1, dict2):
     """
     Merge two dictionaries recursively, with dict2 taking precedence over dict1.

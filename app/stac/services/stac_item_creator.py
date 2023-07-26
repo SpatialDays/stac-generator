@@ -2,6 +2,9 @@ import datetime
 import os
 import uuid
 
+import logging
+logger = logging.getLogger(__name__)
+
 import rasterio
 import rio_stac
 from pystac import Asset, Item
@@ -35,6 +38,7 @@ class STACItemCreator:
         Args:
             payload (dict): A dictionary containing the necessary data to create a STAC item.
         """
+        logger.debug(f"Initializing STAC item creator")
         if not isinstance(payload, dict):
             raise ValueError("Payload should be a dictionary.")
         self.payload = GenerateSTACPayload(**payload)
@@ -46,6 +50,7 @@ class STACItemCreator:
             properties={},
         )
         self.generated_rio_stac_items = []
+        logger.debug(f"Initialized STAC item creator")
 
     def create_item(self) -> Item:
         """
@@ -54,6 +59,7 @@ class STACItemCreator:
         Returns:
             Item: The created STAC item.
         """
+        logger.debug(f"Creating STAC item from payload")
         self._add_assets()
         self._add_tiff_stac_metadata()
 
@@ -63,13 +69,14 @@ class STACItemCreator:
                 metadata=self.payload.metadata,
                 metadata_url=self.payload.metadata_url,
             )
-
+        logger.debug(f"Created STAC item")
         return self.item.to_dict()
 
     def _add_assets(self):
         """
         Add assets to the STAC item from the file paths provided in the payload.
         """
+        logger.debug(f"Adding assets to STAC item from payload")
         parser = MetadataParserManager.get_parser(self.payload.parser)
 
         for file in self.payload.files:
@@ -83,13 +90,14 @@ class STACItemCreator:
                 else:
                     asset = Asset(href=file, media_type=media_type)
                 self.item.add_asset(key=asset_key, asset=asset)
+        logger.debug(f"Added assets to STAC item")
 
     def _generate_and_add_metadata(self, filepath, add_asset=True):
         """
         Generate STAC metadata for the given TIFF file using rio_stac and add to the STAC item.
         """
         parser = MetadataParserManager.get_parser(self.payload.parser)
-
+        logger.debug(f"Generating metadata for {filepath} using {parser}")
         generated_stac = rio_stac.create_stac_item(
             get_mounted_file(filepath),
             with_eo=True,
@@ -97,6 +105,7 @@ class STACItemCreator:
             with_raster=True,
             geom_densify_pts=21,
         )
+        logger.debug(f"Generated metadata for {filepath} using {parser}")
         self.generated_rio_stac_items.append(generated_stac)
 
         if add_asset:
@@ -110,13 +119,14 @@ class STACItemCreator:
             self.item.add_asset(
                 key=asset_key, asset=generated_stac.assets["asset"]
             )
-
+        logger.debug(f"Added metadata for {filepath} using {parser} to STAC item")
         return generated_stac
 
     def _add_tiff_stac_metadata(self):
         """
         Generate STAC metadata for each TIFF file using rio_stac, and add to the STAC item.
         """
+        logger.debug(f"Adding TIFF STAC metadata to STAC item from payload")
         tiff_filepath = None
         for filepath in self.payload.files:
             if is_tiff(filepath):
@@ -132,6 +142,7 @@ class STACItemCreator:
         self.item.stac_extensions = generated_item.stac_extensions
 
         if tiff_filepath:
+            logger.debug(f"Opening {tiff_filepath} to get TIFFTAG_DATETIME")
             with rasterio.open(get_mounted_file(tiff_filepath)) as ds:
                 tags = ds.tags()
                 tag_datetime = tags.get("TIFFTAG_DATETIME")  # 2022:09:09 15:27:53
@@ -147,6 +158,8 @@ class STACItemCreator:
                 tag_resolution = ds.res
                 if tag_resolution is not None:
                     self.item.properties["gsd"] = tag_resolution[0]
+            logger.debug(f"Closed {tiff_filepath}")
+
 
     def _add_parsed_metadata(self, metadata_type, metadata, metadata_url=None):
         """
