@@ -2,11 +2,10 @@ import json
 import mimetypes
 import os
 from typing import Union, Tuple, List, Dict, Any
-
-from loguru import logger
+import logging
+logger = logging.getLogger(__name__)
 
 import pathlib
-from urllib.parse import urlparse
 
 import rasterio
 from rasterio.env import GDALVersion

@@ -5,7 +5,8 @@ from fastapi.testclient import TestClient
 import redis
 import json
 import os
-from loguru import logger
+import logging
+logger = logging.getLogger(__name__)
 
 from app.main import app
 

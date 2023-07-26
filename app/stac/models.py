@@ -1,6 +1,5 @@
 from typing import List, Optional, Dict, Any
 from pydantic import BaseModel, Field, root_validator
-from loguru import logger
 import requests
 
 
