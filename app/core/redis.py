@@ -29,24 +29,25 @@ def redis_listener(redis_conn):
                 _, job_dict = item
                 item_dict = json.loads(job_dict)
                 stac = STACItemCreator(item_dict).create_item()
-                logger.debug(f"Created STAC item")
+                logger.info(f"Created STAC item")
 
                 collection = (
                         item_dict.get("collection") or item_dict.get("parser") or "default"
                 )
 
                 if getenv("REDIS_PUBLISH_TO_STAC_API") is not None and getenv("REDIS_PUBLISH_TO_STAC_API").lower() == "true":
-                    logger.debug("Publishing to Redis")
+                    logger.info("Publishing to Redis")
                     redis_conn.rpush(
                         REDIS_OUTPUT_LIST_NAME,
                         json.dumps({"collection": collection, "stac": stac}),
                     )
+                    logger.info("Published to Redis")
 
                 if getenv("HTTP_PUBLISH_TO_STAC_API") is not None and getenv("HTTP_PUBLISH_TO_STAC_API").lower() == "true":
                     try:
-                        logger.debug("Publishing to STAC API")
+                        logger.info("Publishing to STAC API")
                         publish_to_stac_fastapi(stac, collection)
-                        logger.debug("Published to STAC API")
+                        logger.info("Published to STAC API")
                     except Exception as e:
                         logger.error(f"Error publishing to STAC API: {e}")
                         break
