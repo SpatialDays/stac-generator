@@ -3,6 +3,7 @@ import os
 import uuid
 
 import logging
+
 logger = logging.getLogger(__name__)
 
 import rasterio
@@ -106,19 +107,27 @@ class STACItemCreator:
             geom_densify_pts=21,
         )
         logger.info(f"Generated metadata for {filepath} using {parser}")
+        logger.info(f"Adding metadata for {filepath} using {parser} to STAC item")
         self.generated_rio_stac_items.append(generated_stac)
+        logger.info(f"Added metadata into generated_rio_stac_items for {filepath} using {parser}")
 
         if add_asset:
+            logger.info(f"Adding asset for {filepath} using {parser} to STAC item")
             if hasattr(parser, 'get_asset_common_name_from_filename'):
                 asset_key = parser.get_asset_common_name_from_filename(return_asset_name(filepath))
+                logger.info(f"Got asset key {asset_key} for {filepath} using {parser} to STAC item")
             else:
                 asset_key = return_asset_name(filepath)
+                logger.info(
+                    f"Could not get asset key for {filepath} using {parser} to STAC item, using filename {asset_key} as asset key")
 
             generated_stac.assets["asset"].media_type = return_tiff_media_type(filepath)
             generated_stac.assets["asset"].href = filepath
+            logger.info(f"Adding asset to stac record for {filepath} using {parser} to STAC item")
             self.item.add_asset(
                 key=asset_key, asset=generated_stac.assets["asset"]
             )
+            logger.info(f"Added asset to stac record for {filepath} using {parser} to STAC item")
         logger.info(f"Added metadata for {filepath} using {parser} to STAC item")
         return generated_stac
 
@@ -159,7 +168,6 @@ class STACItemCreator:
                 if tag_resolution is not None:
                     self.item.properties["gsd"] = tag_resolution[0]
             logger.info(f"Closed {tiff_filepath}")
-
 
     def _add_parsed_metadata(self, metadata_type, metadata, metadata_url=None):
         """
