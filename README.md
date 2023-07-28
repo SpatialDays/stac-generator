@@ -15,6 +15,7 @@ With both HTTP and REDIS entrypoints, this microservice can be used in a variety
 
 The STAC Generator accepts a JSON payload with the following structure:
 
+
 ```json
 {
   "files": [
