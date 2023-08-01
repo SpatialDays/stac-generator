@@ -97,15 +97,16 @@ In case you want to start a Redis listener instead of the HTTP server, you can u
 
 To setup these variables, copy the `.env.example` file to a file named `.env` in the same directory, and replace the right-hand side of each line with your desired settings.
 
-## Mounted Volumes (Optional)
+## Downloading files for processing. (Optional)
 
-When working with large TIFF files, network retrieval can be slow and resource-intensive. To mitigate this, you can optionally configure the application to use mounted volumes. Mounted volumes allow for direct and rapid access to files, which significantly improves performance.
+When working with large TIFF files, network retrieval can be slow and resource-intensive. To mitigate this, you can optionally configure the application to 
+download the required files from Azure Storage instead of mounting the whole storage directly.
 
-To enable the usage of mounted volumes, you need to set the `DOWNLOAD_ASSETS_FROM_URLS` environment variable to `true`. This instructs the application to access the TIFF files directly from a mounted directory.
+To enable this functionality, you need to set the `DOWNLOAD_ASSETS_FROM_URLS` environment variable to `true`. This instructs the application to download the TIFF files.
 
-### Mounted Directory Configuration Setup
+### Azure Blob Storage Directory Configuration Setup
 
-To configure the application for blob mounting, follow these steps:
+To configure the application to download the assets from the Azure Blob Storage do the following:
 
 1. Copy the `blob_mounting_configurations_template.json` file and rename it to `blob_mounting_configurations.json`.
 
@@ -113,7 +114,7 @@ To configure the application for blob mounting, follow these steps:
 
 3. Make sure that `blob_mounting_configurations.json` is in the root directory of the project.
 
-Note: Do not commit `blob_mounting_configurations.json` to your source control. This file contains confidential information.
+Note: Do not commit `blob_mounting_configurations.json` to your source control. This file could contain confidential information.
 
 ## Entrypoints
 
