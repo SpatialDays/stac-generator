@@ -34,7 +34,10 @@ def redis_listener(redis_conn):
                 item_dict = json.loads(job_dict)
                 if DOWNLOAD_ASSETS_FROM_URLS:
                     for file in item_dict["files"]:
-                        blob_mapping_utility.download_blob(file)
+                        try:
+                            blob_mapping_utility.download_blob(file)
+                        except Exception as e:
+                            logger.debug(f"File {file} could not be downloaded. Probably not part of a storage account.")
                 stac = STACItemCreator(item_dict).create_item()
                 logger.info(f"Created STAC item")
 

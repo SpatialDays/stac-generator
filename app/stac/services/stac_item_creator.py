@@ -101,7 +101,10 @@ class STACItemCreator:
         Generate STAC metadata for the given TIFF file using rio_stac and add to the STAC item.
         """
         if DOWNLOAD_ASSETS_FROM_URLS:
-            blob_mapping_utility.download_blob(filepath)
+            try:
+                blob_mapping_utility.download_blob(filepath)
+            except Exception as e:
+                logger.debug(f"File {filepath} could not be downloaded. Probably not part of a storage account.")
 
         parser = MetadataParserManager.get_parser(self.payload.parser)
         logger.info(f"Generating metadata for {filepath} using {parser}")
