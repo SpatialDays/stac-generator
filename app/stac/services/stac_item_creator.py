@@ -20,6 +20,9 @@ from .file_operations import (
 from .metadata_parsers.metadata_parser_manager import MetadataParserManager
 from .metadata_parsers.utils import merge_stac_items
 from ..models import GenerateSTACPayload
+from app.stac.services.blob_mounting.blob_mapping_utility import blob_mapping_utility
+
+DOWNLOAD_ASSETS_FROM_URLS = os.getenv("DOWNLOAD_ASSETS_FROM_URLS", "false").lower() == "true"
 
 
 class STACItemCreator:
@@ -97,6 +100,9 @@ class STACItemCreator:
         """
         Generate STAC metadata for the given TIFF file using rio_stac and add to the STAC item.
         """
+        if DOWNLOAD_ASSETS_FROM_URLS:
+            blob_mapping_utility.download_blob(filepath)
+
         parser = MetadataParserManager.get_parser(self.payload.parser)
         logger.info(f"Generating metadata for {filepath} using {parser}")
         generated_stac = rio_stac.create_stac_item(
