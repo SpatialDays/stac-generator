@@ -92,19 +92,21 @@ In case you want to start a Redis listener instead of the HTTP server, you can u
 - `LOG_COG_INFO`: A boolean variable indicating whether to log additional info about COGs. The default is `false`.
 - `HTTP_PUBLISH_TO_STAC_API`=A boolean variable indicating whether the application should publish the generated STAC items to the STAC API. The default is true. If set to false, the application will not publish the items to the API.
 - `STAC_API_URL`= This is the URL where the STAC API is hosted. The application will communicate with the STAC API through this URL.
-- `USE_MOUNTED_VOLUMES` = A boolean variable indicating whether the application should utilise mounted volumes for faster access to TIFF files.
+- `DOWNLOAD_ASSETS_FROM_URLS` = A boolean variable indicating whether the application should download the assets from Azure Blobs via URL.
+- `AZURE_STORAGE_ACCOUNT_KEY` = The Azure Storage Account Key used to download the assets from Azure Blobs via URL.
 
 To setup these variables, copy the `.env.example` file to a file named `.env` in the same directory, and replace the right-hand side of each line with your desired settings.
 
-## Mounted Volumes (Optional)
+## Downloading files for processing. (Optional)
 
-When working with large TIFF files, network retrieval can be slow and resource-intensive. To mitigate this, you can optionally configure the application to use mounted volumes. Mounted volumes allow for direct and rapid access to files, which significantly improves performance.
+When working with large TIFF files, network retrieval can be slow and resource-intensive. To mitigate this, you can optionally configure the application to 
+download the required files from Azure Storage instead of mounting the whole storage directly.
 
-To enable the usage of mounted volumes, you need to set the `USE_MOUNTED_VOLUMES` environment variable to `true`. This instructs the application to access the TIFF files directly from a mounted directory.
+To enable this functionality, you need to set the `DOWNLOAD_ASSETS_FROM_URLS` environment variable to `true`. This instructs the application to download the TIFF files.
 
-### Mounted Directory Configuration Setup
+### Azure Blob Storage Directory Configuration Setup
 
-To configure the application for blob mounting, follow these steps:
+To configure the application to download the assets from the Azure Blob Storage do the following:
 
 1. Copy the `blob_mounting_configurations_template.json` file and rename it to `blob_mounting_configurations.json`.
 
@@ -112,7 +114,7 @@ To configure the application for blob mounting, follow these steps:
 
 3. Make sure that `blob_mounting_configurations.json` is in the root directory of the project.
 
-Note: Do not commit `blob_mounting_configurations.json` to your source control. This file contains confidential information.
+Note: Do not commit `blob_mounting_configurations.json` to your source control. This file could contain confidential information.
 
 ## Entrypoints
 
