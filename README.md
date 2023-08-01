@@ -92,7 +92,8 @@ In case you want to start a Redis listener instead of the HTTP server, you can u
 - `LOG_COG_INFO`: A boolean variable indicating whether to log additional info about COGs. The default is `false`.
 - `HTTP_PUBLISH_TO_STAC_API`=A boolean variable indicating whether the application should publish the generated STAC items to the STAC API. The default is true. If set to false, the application will not publish the items to the API.
 - `STAC_API_URL`= This is the URL where the STAC API is hosted. The application will communicate with the STAC API through this URL.
-- `USE_MOUNTED_VOLUMES` = A boolean variable indicating whether the application should utilise mounted volumes for faster access to TIFF files.
+- `DOWNLOAD_ASSETS_FROM_URLS` = A boolean variable indicating whether the application should download the assets from Azure Blobs via URL.
+- `AZURE_STORAGE_ACCOUNT_KEY` = The Azure Storage Account Key used to download the assets from Azure Blobs via URL.
 
 To setup these variables, copy the `.env.example` file to a file named `.env` in the same directory, and replace the right-hand side of each line with your desired settings.
 
@@ -100,7 +101,7 @@ To setup these variables, copy the `.env.example` file to a file named `.env` in
 
 When working with large TIFF files, network retrieval can be slow and resource-intensive. To mitigate this, you can optionally configure the application to use mounted volumes. Mounted volumes allow for direct and rapid access to files, which significantly improves performance.
 
-To enable the usage of mounted volumes, you need to set the `USE_MOUNTED_VOLUMES` environment variable to `true`. This instructs the application to access the TIFF files directly from a mounted directory.
+To enable the usage of mounted volumes, you need to set the `DOWNLOAD_ASSETS_FROM_URLS` environment variable to `true`. This instructs the application to access the TIFF files directly from a mounted directory.
 
 ### Mounted Directory Configuration Setup
 
