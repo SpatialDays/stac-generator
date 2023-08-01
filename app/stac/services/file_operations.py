@@ -3,6 +3,7 @@ import mimetypes
 import os
 from typing import Union, Tuple, List, Dict, Any
 import logging
+
 logger = logging.getLogger(__name__)
 
 import pathlib
@@ -10,22 +11,7 @@ import pathlib
 import rasterio
 from rasterio.env import GDALVersion
 
-from app.stac.services.blob_mounting.blob_mapping_utility import BlobMappingUtility
-
-# Blob mounting configurations
-try:
-    blob_mounting_configurations_path = os.getenv(
-        "BLOB_MOUNTING_CONFIGURATIONS_JSON_PATH", "blob_mounting_configurations.json"
-    )
-    with open(blob_mounting_configurations_path) as json_file:
-        blob_mounting_configurations_list: List[Dict[str, Any]] = json.load(json_file)[
-            "blob_mounting_configurations"
-        ]
-    blob_mapping_utility = BlobMappingUtility(blob_mounting_configurations_list)
-except Exception as e:
-    logger.warning(
-        f"Could not find blob_mounting_configurations.json. Blob mounting will not be available :: {e}"
-    )
+from app.stac.services.blob_mounting.blob_mapping_utility import blob_mapping_utility
 
 
 def get_file_type(filepath: str):
