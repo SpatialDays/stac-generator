@@ -15,6 +15,7 @@ load_dotenv()
 
 REDIS_INPUT_LIST_NAME = getenv("REDIS_INPUT_LIST_NAME", "stac_generator_input")
 REDIS_OUTPUT_LIST_NAME = getenv("REDIS_OUTPUT_LIST_NAME", "stac_generator_output")
+DOWNLOAD_ASSETS_FROM_URLS = getenv("DOWNLOAD_ASSETS_FROM_URLS", "false").lower() == "true"
 
 
 def redis_listener(redis_conn):
@@ -31,8 +32,9 @@ def redis_listener(redis_conn):
                 logger.debug(f"Received item from Redis: {item}")
                 _, job_dict = item
                 item_dict = json.loads(job_dict)
-                for file in item_dict["files"]:
-                    blob_mapping_utility.download_blob(file)
+                if DOWNLOAD_ASSETS_FROM_URLS:
+                    for file in item_dict["files"]:
+                        blob_mapping_utility.download_blob(file)
                 stac = STACItemCreator(item_dict).create_item()
                 logger.info(f"Created STAC item")
 
@@ -58,8 +60,8 @@ def redis_listener(redis_conn):
                     except Exception as e:
                         logger.error(f"Error publishing to STAC API: {e}")
                         break
-
-                blob_mapping_utility.cleanup_files()
+                if DOWNLOAD_ASSETS_FROM_URLS:
+                    blob_mapping_utility.cleanup_files()
                 logger.info("Done creating STAC item")
 
         except redis.ConnectionError as e:
