@@ -86,7 +86,10 @@ class STACItemCreator:
         for file in self.payload.files:
             if not is_tiff(file):
                 filename = return_asset_name(file)
-                asset_key = parser.get_asset_common_name_from_filename(return_asset_name(filename))
+                if hasattr(parser, 'get_asset_common_name_from_filename'):
+                    asset_key = parser.get_asset_common_name_from_filename(return_asset_name(filename))
+                else:
+                    asset_key = return_asset_name(filename)
                 media_type = get_file_type(file)
                 if asset_key.lower() == "rendered_preview":
                     asset = Asset(href=file, media_type=media_type, roles=["overview"],
