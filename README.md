@@ -93,6 +93,7 @@ In case you want to start a Redis listener instead of the HTTP server, you can u
 - `HTTP_PUBLISH_TO_STAC_API`=A boolean variable indicating whether the application should publish the generated STAC items to the STAC API. The default is true. If set to false, the application will not publish the items to the API.
 - `STAC_API_URL`= This is the URL where the STAC API is hosted. The application will communicate with the STAC API through this URL.
 - `DOWNLOAD_ASSETS_FROM_URLS` = A boolean variable indicating whether the application should download the assets from Azure Blobs via URL.
+- `CLEANUP_DOWNLOADED_FILES` = A boolean variable indicating whether the application should delete the downloaded files after processing.
 - `AZURE_STORAGE_ACCOUNT_KEY` = The Azure Storage Account Key used to download the assets from Azure Blobs via URL.
 
 To setup these variables, copy the `.env.example` file to a file named `.env` in the same directory, and replace the right-hand side of each line with your desired settings.
