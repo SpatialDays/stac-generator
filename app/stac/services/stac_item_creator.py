@@ -20,6 +20,9 @@ from .file_operations import (
 from .metadata_parsers.metadata_parser_manager import MetadataParserManager
 from .metadata_parsers.utils import merge_stac_items
 from ..models import GenerateSTACPayload
+from app.stac.services.blob_mounting.blob_mapping_utility import blob_mapping_utility
+
+DOWNLOAD_ASSETS_FROM_URLS = os.getenv("DOWNLOAD_ASSETS_FROM_URLS", "false").lower() == "true"
 
 
 class STACItemCreator:
@@ -83,7 +86,10 @@ class STACItemCreator:
         for file in self.payload.files:
             if not is_tiff(file):
                 filename = return_asset_name(file)
-                asset_key = parser.get_asset_common_name_from_filename(return_asset_name(filename))
+                if hasattr(parser, 'get_asset_common_name_from_filename'):
+                    asset_key = parser.get_asset_common_name_from_filename(return_asset_name(filename))
+                else:
+                    asset_key = return_asset_name(filename)
                 media_type = get_file_type(file)
                 if asset_key.lower() == "rendered_preview":
                     asset = Asset(href=file, media_type=media_type, roles=["overview"],
@@ -97,6 +103,12 @@ class STACItemCreator:
         """
         Generate STAC metadata for the given TIFF file using rio_stac and add to the STAC item.
         """
+        if DOWNLOAD_ASSETS_FROM_URLS:
+            try:
+                blob_mapping_utility.download_blob(filepath)
+            except Exception as e:
+                logger.debug(f"File {filepath} could not be downloaded. Probably not part of a storage account.")
+
         parser = MetadataParserManager.get_parser(self.payload.parser)
         logger.info(f"Generating metadata for {filepath} using {parser}")
         generated_stac = rio_stac.create_stac_item(

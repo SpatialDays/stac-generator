@@ -2,7 +2,7 @@ import redis
 import os
 
 import logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 logging.debug("Starting Redis listener")
 logging.info("Starting Redis listener")
 
