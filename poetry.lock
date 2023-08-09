@@ -152,13 +152,13 @@ uvloop = ["uvloop (>=0.15.2)"]
 
 [[package]]
 name = "blob-mounting-helper-utility"
-version = "1.0.10"
+version = "1.1.0"
 description = "Blob mapping utility for easy translation between azure urls and local paths"
 optional = false
 python-versions = "*"
 files = [
-    {file = "blob_mounting_helper_utility-1.0.10-py3-none-any.whl", hash = "sha256:8e0083b610c9a4bee9896860cceff92ec94027fd036f157522df72f3beffc5a2"},
-    {file = "blob_mounting_helper_utility-1.0.10.tar.gz", hash = "sha256:962223910b1e815b40122bb8824bc3e48f2370d46c13fa300d7f8bb4907e6d1f"},
+    {file = "blob_mounting_helper_utility-1.1.0-py3-none-any.whl", hash = "sha256:1c1a5b2477a455885d1b6dbd8fe5d47eb61aa356940bea19774db6da25867e7a"},
+    {file = "blob_mounting_helper_utility-1.1.0.tar.gz", hash = "sha256:e76804a91ed476a026e26e5ec2f6df655e2676b19dcad37c1f8fae912109a0fa"},
 ]
 
 [package.dependencies]
@@ -1539,4 +1539,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "e18ec33c227c681d256bd51b37931bdfb6e43b7f87abcbc381c59d8bddbe8e7b"
+content-hash = "5e6e85d2b8bb6813c6f87ed719b3be64d02d2cc07af45f59b51e8365b3a3b840"
