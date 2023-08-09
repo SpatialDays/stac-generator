@@ -220,10 +220,10 @@ def return_tiff_media_type(tiff_path: str) -> str:
     Returns:
         str: The media type of the TIFF file
     """
-    if os.getenv("CHECK_COG_TYPE").lower() == "true":
+    if os.getenv("CHECK_COG_TYPE", "false").lower() == "true":
         cog = is_cog(get_mounted_file(tiff_path))
 
-        if os.getenv("LOG_COG_INFO").lower() == "true":
+        if os.getenv("LOG_COG_INFO", "false").lower() == "true":
             logger.info("Is the file a COG: {}".format(cog[0]))
 
             if len(cog[1]) > 0:
