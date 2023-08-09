@@ -15,6 +15,12 @@ class GenerateSTACPayload(BaseModel):
     metadata: Optional[Dict[str, Any]] = Field(
         None, example={"ID": "example_stac_item"}
     )
+    files_converted_to_cog: Optional[List[str]] = Field(
+        None,
+        example=[
+            "https://deafrica-sentinel-1.s3.af-south-1.amazonaws.com/s1_rtc/N13E025/2018/01/04/0101B0/s1_rtc_0101B0_N13E025_2018_01_04_ANGLE.tif"
+        ],
+    )
     metadata_url: Optional[str] = Field(
         None, example="https://path-to-storage.com/SX8888.json"
     )

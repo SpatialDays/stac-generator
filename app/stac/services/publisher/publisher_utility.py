@@ -19,7 +19,7 @@ def publish_to_stac_fastapi(stac, collection, max_retries=5, retry_delay=1):
     :param retry_delay: Delay between retries in seconds.
     :return: True if successful, False otherwise.
     """
-    stac_api_url = os.getenv("STAC_API_URL")
+    stac_api_url = os.getenv("STAC_API_URL", None)
 
     # Check if environment variables are set
     if not stac_api_url:
