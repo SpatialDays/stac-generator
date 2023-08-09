@@ -68,11 +68,7 @@ class STACItemCreator:
         self._add_tiff_stac_metadata()
 
         if self.payload.parser and self.payload.metadata:
-            self._add_parsed_metadata(
-                metadata_type=self.payload.parser,
-                metadata=self.payload.metadata,
-                metadata_url=self.payload.metadata_url,
-            )
+            self._add_parsed_metadata()
         logger.info(f"Created STAC item")
         return self.item.to_dict()
 
@@ -181,18 +177,14 @@ class STACItemCreator:
                     self.item.properties["gsd"] = tag_resolution[0]
             logger.info(f"Closed {tiff_filepath}")
 
-    def _add_parsed_metadata(self, metadata_type, metadata, metadata_url=None):
+    def _add_parsed_metadata(self):
         """
         Parse the metadata using the appropriate parser and add it to the STAC item.
         """
         # Using MetadataParserManager to get the appropriate parser
-        parser = MetadataParserManager.get_parser(metadata_type)
+        parser = MetadataParserManager.get_parser(self.payload.parser)
 
-        # Optional metadata_url can be provided to the parser
-        if metadata_url:
-            metadata_stac_item = parser.parse(metadata, metadata_url=metadata_url)
-        else:
-            metadata_stac_item = parser.parse(metadata)
+        metadata_stac_item = parser.parse(self.payload)
 
         # Now merge the metadata_stac_item into the item
         self.item = Item.from_dict(
