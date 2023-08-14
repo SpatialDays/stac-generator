@@ -33,7 +33,7 @@ def redis_listener(redis_conn):
             if item:
                 logger.info("Timing start")
                 logger.info("Received item from Redis")
-                logger.debug(f"Received item from Redis: {item}")
+                # logger.debug(f"Received item from Redis: {item}")
                 _, job_dict = item
                 item_dict = json.loads(job_dict)
                 files_for_download = item_dict.get("files_converted_to_cog", [])

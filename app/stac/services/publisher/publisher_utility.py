@@ -3,9 +3,11 @@ import os
 import time
 import requests
 import logging
+
 logger = logging.getLogger(__name__)
 
-def publish_to_stac_fastapi(stac, collection, max_retries=5, retry_delay=1):
+
+def publish_to_stac_fastapi(stac, collection, max_retries=5, retry_delay=5):
     """
     Publish data to a STAC FastAPI.
 
@@ -41,7 +43,7 @@ def publish_to_stac_fastapi(stac, collection, max_retries=5, retry_delay=1):
 
             # If POST fails, attempt PUT request
             if (
-                response.status_code == 409
+                    response.status_code == 409
             ):  # Assuming 409 Conflict indicates item already exists
                 response = requests.put(
                     item_url,
@@ -52,13 +54,11 @@ def publish_to_stac_fastapi(stac, collection, max_retries=5, retry_delay=1):
             # Check if successful
             if response.status_code in [200, 201]:
                 return item_url
-            elif "DB lock error" in response.text: # TODO: What's the response code for a DB lock error?
+            else:
                 logger.warning("DB is locked, retrying...")
                 time.sleep(retry_delay)
                 continue
-            else:
-                logger.error(f"Failed to publish to STAC API: {response.content}")
-                return False
+
 
         except requests.RequestException as e:
             logger.error(f"Request error: {e}")
