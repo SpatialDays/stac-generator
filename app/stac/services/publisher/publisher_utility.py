@@ -7,7 +7,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def publish_to_stac_fastapi(stac, collection, max_retries=5, retry_delay=5):
+def publish_to_stac_fastapi(stac, collection, max_retries=5, retry_delay=5) -> str:
     """
     Publish data to a STAC FastAPI.
 
@@ -20,13 +20,17 @@ def publish_to_stac_fastapi(stac, collection, max_retries=5, retry_delay=5):
     :param max_retries: Maximum number of retries in case of a DB lock error.
     :param retry_delay: Delay between retries in seconds.
     :return: True if successful, False otherwise.
+
+    :raises ValueError: If STAC_API_URL environment variable is not set.
+    :raises Exception: If max_retries is reached or if there is an error.
+    :raises requests.RequestException: If there is a request error.
     """
     stac_api_url = os.getenv("STAC_API_URL", None)
 
     # Check if environment variables are set
     if not stac_api_url:
         logger.error("STAC_API_URL environment variable is not set.")
-        return False
+        raise ValueError("STAC_API_URL environment variable is not set.")
 
     item_id = stac["id"]
     item_url = f"{stac_api_url}/collections/{collection}/items/{item_id}"
@@ -62,12 +66,10 @@ def publish_to_stac_fastapi(stac, collection, max_retries=5, retry_delay=5):
 
         except requests.RequestException as e:
             logger.error(f"Request error: {e}")
-            return False
+            raise e
         except Exception as e:
             logger.error(f"An error occurred: {e}")
-            return False
+            raise e
 
     logger.error("Max retries reached. Giving up.")
-    return False
-
-    return item_url
+    raise Exception("Max retries reached. Giving up.")
