@@ -46,6 +46,7 @@ def redis_listener(redis_conn):
                         except Exception as e:
                             logger.debug(
                                 f"File {file} could not be downloaded. Probably not part of a storage account.")
+                            raise e
                 stac = STACItemCreator(item_dict).create_item()
                 logger.info(f"Created STAC item")
 
@@ -70,7 +71,7 @@ def redis_listener(redis_conn):
                         logger.info("Published to STAC API")
                     except Exception as e:
                         logger.error(f"Error publishing to STAC API: {e}")
-                        break
+                        raise e
                 if _CLEANUP_DOWNLOADED_FILES:
                     files_to_delete = item_dict.get("files_converted_to_cog", []) + item_dict.get("discovered_files",
                                                                                                   []) + item_dict.get(
@@ -90,7 +91,7 @@ def redis_listener(redis_conn):
 
         except redis.ConnectionError as e:
             logger.error(f"Redis connection error: {e}")
-            break
+            raise e
 
         # not catching this makes it eaiser to debug, as this exception is raised any of the functions and in the try
         # block fail subfunctions in the try block fail except Exception as e: logger.error(f"Error processing item:
