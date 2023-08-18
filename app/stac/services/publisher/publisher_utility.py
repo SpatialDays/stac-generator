@@ -3,9 +3,11 @@ import os
 import time
 import requests
 import logging
+
 logger = logging.getLogger(__name__)
 
-def publish_to_stac_fastapi(stac, collection, max_retries=5, retry_delay=1):
+
+def publish_to_stac_fastapi(stac, collection, max_retries=5, retry_delay=5) -> str:
     """
     Publish data to a STAC FastAPI.
 
@@ -18,13 +20,17 @@ def publish_to_stac_fastapi(stac, collection, max_retries=5, retry_delay=1):
     :param max_retries: Maximum number of retries in case of a DB lock error.
     :param retry_delay: Delay between retries in seconds.
     :return: True if successful, False otherwise.
+
+    :raises ValueError: If STAC_API_URL environment variable is not set.
+    :raises Exception: If max_retries is reached or if there is an error.
+    :raises requests.RequestException: If there is a request error.
     """
     stac_api_url = os.getenv("STAC_API_URL", None)
 
     # Check if environment variables are set
     if not stac_api_url:
         logger.error("STAC_API_URL environment variable is not set.")
-        return False
+        raise ValueError("STAC_API_URL environment variable is not set.")
 
     item_id = stac["id"]
     item_url = f"{stac_api_url}/collections/{collection}/items/{item_id}"
@@ -41,7 +47,7 @@ def publish_to_stac_fastapi(stac, collection, max_retries=5, retry_delay=1):
 
             # If POST fails, attempt PUT request
             if (
-                response.status_code == 409
+                    response.status_code == 409
             ):  # Assuming 409 Conflict indicates item already exists
                 response = requests.put(
                     item_url,
@@ -52,22 +58,18 @@ def publish_to_stac_fastapi(stac, collection, max_retries=5, retry_delay=1):
             # Check if successful
             if response.status_code in [200, 201]:
                 return item_url
-            elif "DB lock error" in response.text: # TODO: What's the response code for a DB lock error?
+            else:
                 logger.warning("DB is locked, retrying...")
                 time.sleep(retry_delay)
                 continue
-            else:
-                logger.error(f"Failed to publish to STAC API: {response.content}")
-                return False
+
 
         except requests.RequestException as e:
             logger.error(f"Request error: {e}")
-            return False
+            raise e
         except Exception as e:
             logger.error(f"An error occurred: {e}")
-            return False
+            raise e
 
     logger.error("Max retries reached. Giving up.")
-    return False
-
-    return item_url
+    raise Exception("Max retries reached. Giving up.")
