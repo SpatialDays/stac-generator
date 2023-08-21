@@ -6,6 +6,7 @@ from .services.stac_item_creator import STACItemCreator
 from .services.publisher.publisher_utility import publish_to_stac_fastapi
 
 import json
+import logging
 
 router = APIRouter()
 
@@ -31,6 +32,7 @@ async def generate_stac(item: GenerateSTACPayload):
     try:
         stac = STACItemCreator(item.dict()).create_item()
     except Exception as e:
+        logging.exception(e)
         raise HTTPException(status_code=500, detail=str(e))
     
     collection = item.collection or item.parser or "default"
