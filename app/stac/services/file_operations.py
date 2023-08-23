@@ -3,6 +3,7 @@ import mimetypes
 import os
 from typing import Union, Tuple, List, Dict, Any
 import logging
+from urllib.parse import urlparse
 
 logger = logging.getLogger(__name__)
 
@@ -25,6 +26,8 @@ def get_file_type(filepath: str):
     Returns:
         str: The MIME type of the file.
     """
+    if "?" in filepath:
+        filepath = filepath.split("?")[0]
     mime_type, _ = mimetypes.guess_type(filepath)
     return mime_type
 
@@ -248,10 +251,13 @@ def return_asset_name(filename: str, include_extension: bool = True) -> str:
     Returns:
         str: The asset name
     """
+    parsed_url = urlparse(filename)
+    path = parsed_url.path
+    basename = os.path.basename(path)
+    
     if include_extension:
-        return os.path.basename(filename)
-
-    return os.path.splitext(os.path.basename(filename))[0]
+        return basename
+    return os.path.splitext(basename)[0]
 
 
 def return_asset_href(filepath):

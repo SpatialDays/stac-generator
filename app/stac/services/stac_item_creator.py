@@ -67,7 +67,7 @@ class STACItemCreator:
         self._add_assets()
         self._add_tiff_stac_metadata()
 
-        if self.payload.parser and self.payload.metadata:
+        if self.payload.parser:
             self._add_parsed_metadata()
         logger.info(f"Created STAC item")
         return self.item.to_dict()
