@@ -88,10 +88,10 @@ class STACItemCreator:
                     asset_key = return_asset_name(filename)
                 media_type = get_file_type(file)
                 if asset_key.lower() == "rendered_preview":
-                    asset = Asset(href=file, media_type=media_type, roles=["overview"],
+                    asset = Asset(href=file.split('?')[0], media_type=media_type, roles=["overview"],
                                   extra_fields={"rel": "preview", "title": "Rendered preview"})
                 else:
-                    asset = Asset(href=file, media_type=media_type)
+                    asset = Asset(href=file.split('?')[0], media_type=media_type)
                 self.item.add_asset(key=asset_key, asset=asset)
         logger.info(f"Added assets to STAC item")
 
