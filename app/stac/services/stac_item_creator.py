@@ -69,7 +69,6 @@ class STACItemCreator:
 
         if self.payload.parser:
             self._add_parsed_metadata()
-        logger.info(f"Created STAC item")
         return self.item.to_dict()
 
     def _add_assets(self):
@@ -115,7 +114,6 @@ class STACItemCreator:
             geom_densify_pts=21,
         )
         logger.info(f"Generated metadata for {filepath} using {parser}")
-        logger.info(f"Adding metadata for {filepath} using {parser} to STAC item")
         self.generated_rio_stac_items.append(generated_stac)
         logger.info(f"Added metadata into generated_rio_stac_items for {filepath} using {parser}")
 
@@ -130,7 +128,7 @@ class STACItemCreator:
                     f"Could not get asset key for {filepath} using {parser} to STAC item, using filename {asset_key} as asset key")
 
             generated_stac.assets["asset"].media_type = return_tiff_media_type(filepath)
-            generated_stac.assets["asset"].href = filepath
+            generated_stac.assets["asset"].href = filepath.split('?')[0]
             logger.info(f"Adding asset to stac record for {filepath} using {parser} to STAC item")
             self.item.add_asset(
                 key=asset_key, asset=generated_stac.assets["asset"]

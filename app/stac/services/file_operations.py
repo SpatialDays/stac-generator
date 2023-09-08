@@ -16,7 +16,15 @@ DOWNLOAD_ASSETS_FROM_URLS = os.getenv("DOWNLOAD_ASSETS_FROM_URLS", "false").lowe
 from app.stac.services.blob_mounting.blob_mapping_utility import blob_mapping_utility
 
 
-def get_file_type(filepath: str):
+EXT_TO_MIME_LOOKUP = {
+    '.dbf': 'application/x-dbf',
+    '.prj': 'text/plain',
+    '.shp': 'application/x-shp',
+    '.shx': 'application/x-shx'
+}
+
+
+def get_file_type(filepath: str) -> str:
     """
     Determines the MIME type of a file based on its content.
 
@@ -26,9 +34,17 @@ def get_file_type(filepath: str):
     Returns:
         str: The MIME type of the file.
     """
+    # Extracts the main file path from a URL with query parameters
     if "?" in filepath:
         filepath = filepath.split("?")[0]
+
     mime_type, _ = mimetypes.guess_type(filepath)
+
+    # Handle special cases
+    if mime_type is None:
+        file_extension = filepath[filepath.rfind('.'):].lower()
+        mime_type = EXT_TO_MIME_LOOKUP.get(file_extension)
+
     return mime_type
 
 
