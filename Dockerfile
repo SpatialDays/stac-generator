@@ -15,7 +15,7 @@ ENV PYTHONPATH=/app
 
 WORKDIR /app
 # copying poetry stuff before the rest of the code to take advantage of docker caching
-COPY poetry.lock .
+# COPY poetry.lock .
 COPY pyproject.toml .
 
 RUN poetry config virtualenvs.create false \
