@@ -76,9 +76,6 @@ To setup these variables, copy the `.env.example` file to a file named `.env` in
 
 
 ## Entrypoints
-
-This microservice can works with HTTP and Redis.
-
 Please refer to `tests/test_stac.py` for how it currently works.
 
 To do a CURL request you can do
