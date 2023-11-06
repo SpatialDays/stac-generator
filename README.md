@@ -2,8 +2,6 @@
 
 STAC Generator is a microservice that creates SpatioTemporal Asset Catalog (STAC) JSON from provided asset and metadata file paths.
 
-With both HTTP and REDIS entrypoints, this microservice can be used in a variety of ways to generate STAC items from the incoming payload.
-
 # Usage
 
 1. Clone the repository
@@ -65,26 +63,6 @@ The payload submitted as a JSON object consists of four keys: `files`, `metadata
 
 This application is configured using the following environment variables:
 
-### Redis Configuration (Optional)
-
-In addition to HTTP requests, this application can also be configured to listen for incoming tasks on a Redis channel.
-
-In case if you want to use the Redis listener, the entrypoint is:
-
-```bash
-python3 -m app.redis_entrypoint
-```
-
-See additional [./Dockerfile-redis](./Dockerfile-redis) for more details.
-
-In case you want to start a Redis listener instead of the HTTP server, you can use the following environment variables:
-
-- `REDIS_HOST`: This is the hostname of your Redis instance. The default is `redis`.
-- `REDIS_PORT`: This is the port number of your Redis instance. The default is `6379`.
-- `REDIS_INPUT_LIST_NAME`: This is the name of the Redis list that the application will monitor for incoming tasks. The default is `stac_generator_generate`.
-- `REDIS_OUTPUT_LIST_NAME`: This is the name of the Redis list where the application will post the results of its tasks. The default is `stac_generator_output`.
-- `HTTP_PUBLISH_TO_STAC_API`: A boolean variable indicating whether the application should publish the generated STAC items to the STAC API via HTTP request.
-- `REDIS_PUBLISH_TO_STAC_API`: A boolean variable indicating whether the application should publish the generated STAC items to the REDIS channel.
 
 ### Other Configurations
 
@@ -92,38 +70,13 @@ In case you want to start a Redis listener instead of the HTTP server, you can u
 - `LOG_COG_INFO`: A boolean variable indicating whether to log additional info about COGs. The default is `false`.
 - `HTTP_PUBLISH_TO_STAC_API`=A boolean variable indicating whether the application should publish the generated STAC items to the STAC API. The default is true. If set to false, the application will not publish the items to the API.
 - `STAC_API_URL`= This is the URL where the STAC API is hosted. The application will communicate with the STAC API through this URL.
-- `DOWNLOAD_ASSETS_FROM_URLS` = A boolean variable indicating whether the application should download the assets from Azure Blobs via URL.
-- `CLEANUP_DOWNLOADED_FILES` = A boolean variable indicating whether the application should delete the downloaded files after processing.
-- `AZURE_STORAGE_ACCOUNT_KEY` = The Azure Storage Account Key used to download the assets from Azure Blobs via URL.
+
 
 To setup these variables, copy the `.env.example` file to a file named `.env` in the same directory, and replace the right-hand side of each line with your desired settings.
 
-## Downloading files for processing. (Optional)
-
-When working with large TIFF files, network retrieval can be slow and resource-intensive. To mitigate this, you can optionally configure the application to 
-download the required files from Azure Storage instead of mounting the whole storage directly.
-
-To enable this functionality, you need to set the `DOWNLOAD_ASSETS_FROM_URLS` environment variable to `true`. This instructs the application to download the TIFF files.
-
-### Azure Blob Storage Directory Configuration Setup
-
-To configure the application to download the assets from the Azure Blob Storage do the following:
-
-1. Copy the `blob_mounting_configurations_template.json` file and rename it to `blob_mounting_configurations.json`.
-
-2. Open `blob_mounting_configurations.json` and replace the placeholder values with your actual mapped Storage details.
-
-3. Make sure that `blob_mounting_configurations.json` is in the root directory of the project.
-
-Note: Do not commit `blob_mounting_configurations.json` to your source control. This file could contain confidential information.
 
 ## Entrypoints
-
-This microservice can works with HTTP and Redis.
-
 Please refer to `tests/test_stac.py` for how it currently works.
-
-To use Redis, you can submit a request to the channel `stac_generator_stac`
 
 To do a CURL request you can do
 

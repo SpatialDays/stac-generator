@@ -2,9 +2,6 @@
 
 from fastapi.testclient import TestClient
 
-import redis
-import json
-import os
 import logging
 logger = logging.getLogger(__name__)
 
@@ -48,34 +45,3 @@ def test_create_item():
     response = client.post(STAC_ROUTE + GENERATE_STAC_ENDPOINT, json=mock_item_dict)
     assert response.status_code == 200
 
-
-def test_redis_create_item():
-    """
-    Tests if the item can be added to a Redis list
-
-    poetry run python -m pytest --log-level=INFO --capture=no app/tests/test_stac.py::test_redis_create_item
-
-    """
-    redis_client = redis.StrictRedis(
-        host=os.getenv("REDIS_HOST"),
-        port=os.getenv("REDIS_PORT"),
-        db=os.getenv("REDIS_DB"),
-        decode_responses=True,
-    )
-
-    # Specify the key and the payload to be pushed
-    key = "stac_generator_generate"
-    mock_item_dict = {
-        "files": [
-            "https://path-to-storage.com/readme.md",
-            "https://path-to-storage.com/shapefile.shp",
-            "https://deafrica-sentinel-1.s3.af-south-1.amazonaws.com/s1_rtc/N13E025/2018/01/04/0101B0/s1_rtc_0101B0_N13E025_2018_01_04_ANGLE.tif",
-        ],
-        "metadata": {"ID": "example_stac_item"},
-        "metadata_url": "https://path-to-storage.com/SX8888.json",
-        "parser": "example",
-    }
-
-    payload = json.dumps(mock_item_dict)
-    redis_client.rpush(key, payload)
-    logger.info("Item successfully added to Redis")
