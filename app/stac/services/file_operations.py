@@ -1,4 +1,3 @@
-import json
 import mimetypes
 import os
 from typing import Union, Tuple, List, Dict, Any
@@ -59,18 +58,7 @@ def is_tiff(filepath: str):
 
 
 def get_mounted_file(filepath: str):
-    """
-    Converts a given file path into its corresponding path within a mounted file system.
-
-    This function parses the given file path and prepends it with '/mnt/' to simulate a path
-    in a file system that's been mounted at '/mnt/'.
-
-    Args:
-        filepath (str): The original file path.
-
-    Returns:
-        str: The corresponding path in the mounted file system.
-    """
+    # TODO: This was used when we had blobfuse mounted in the container. We should remove this function
     return filepath
 
 
@@ -271,4 +259,5 @@ def return_asset_name(filename: str, include_extension: bool = True) -> str:
 
 
 def return_asset_href(filepath):
+    # TODO: This was used when we had blobfuse mounted in the container. We should remove this function
     return filepath
