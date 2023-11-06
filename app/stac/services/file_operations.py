@@ -12,10 +12,6 @@ import pathlib
 import rasterio
 from rasterio.env import GDALVersion
 
-DOWNLOAD_ASSETS_FROM_URLS = os.getenv("DOWNLOAD_ASSETS_FROM_URLS", "false").lower() == "true"
-from app.stac.services.blob_mounting.blob_mapping_utility import blob_mapping_utility
-
-
 EXT_TO_MIME_LOOKUP = {
     '.dbf': 'application/x-dbf',
     '.prj': 'text/plain',
@@ -75,8 +71,6 @@ def get_mounted_file(filepath: str):
     Returns:
         str: The corresponding path in the mounted file system.
     """
-    if DOWNLOAD_ASSETS_FROM_URLS:
-        return blob_mapping_utility.get_mounted_filepath_from_url(filepath)
     return filepath
 
 
@@ -277,6 +271,4 @@ def return_asset_name(filename: str, include_extension: bool = True) -> str:
 
 
 def return_asset_href(filepath):
-    if DOWNLOAD_ASSETS_FROM_URLS:
-        return blob_mapping_utility.get_url_from_mounted_filepath(filepath)
     return filepath
